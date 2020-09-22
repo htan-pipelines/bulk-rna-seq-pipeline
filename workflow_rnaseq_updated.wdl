@@ -1,9 +1,18 @@
 
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/FASTQC.wdl" as fastqc
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/RSEQC_TIN.wdl" as rseqc_TIN
 import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:star_v1-0_BETA/versions/7/plain-WDL/descriptor" as star_wdl
 import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:markduplicates_v1-0_BETA/versions/5/plain-WDL/descriptor" as markduplicates_wdl
 import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:rsem_v1-0_BETA/versions/5/plain-WDL/descriptor" as rsem_wdl
 import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:rnaseqc2_v1-0_BETA/versions/2/plain-WDL/descriptor" as rnaseqc_wdl
-
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/gtfToCallingIntervals.wdl" as gtftocallingintervals_wdl
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/SplitNCigarReads.wdl" as splitncigar
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/BaseRecalibrator.wdl" as basecalibrator
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/ApplyBQSR.wdl" as applyBQSR
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/ScatterIntervalList.wdl" as scatterintervallist
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/HaplotypeCaller.wdl" as haplotypecaller
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/MergeVCFs.wdl" as mergeVCF
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/VariantFiltration.wdl" as variantfiltration
 
 workflow rnaseq_pipeline_workflow {
 
@@ -34,7 +43,7 @@ workflow rnaseq_pipeline_workflow {
 
 
 
-    call FASTQC.FASTQC{
+    call fastqc.FASTQC{
         input: prefix=prefix
     }     
     call star_wdl.star {
@@ -54,7 +63,7 @@ workflow rnaseq_pipeline_workflow {
         input: bam_file=markduplicates.bam_file, prefix=prefix
     }
      
-    call gtfToCallingIntervals {
+    call gtftocallingintervals_wdl.gtfToCallingIntervals {
         input:
             gtf = annotationsGTF,
             ref_dict = refDict,
@@ -63,7 +72,7 @@ workflow rnaseq_pipeline_workflow {
             docker = gatk4_docker
     }
 
-    call SplitNCigarReads {
+    call splitncigar.SplitNCigarReads {
         input:
             input_bam = MarkDuplicates.output_bam,
             input_bam_index = MarkDuplicates.output_bam_index,
@@ -78,7 +87,7 @@ workflow rnaseq_pipeline_workflow {
     }
 
 
-    call BaseRecalibrator {
+    call basecalibrator.BaseRecalibrator {
         input:
             input_bam = SplitNCigarReads.output_bam,
             input_bam_index = SplitNCigarReads.output_bam_index,
@@ -95,7 +104,7 @@ workflow rnaseq_pipeline_workflow {
             gatk_path = gatk_path
     }
 
-    call ApplyBQSR {
+    call applyBQSR.ApplyBQSR {
         input:
             input_bam =  SplitNCigarReads.output_bam,
             input_bam_index = SplitNCigarReads.output_bam_index,
@@ -110,7 +119,7 @@ workflow rnaseq_pipeline_workflow {
     }
 
 
-    call ScatterIntervalList {
+    call scatterintervallist.ScatterIntervalList {
         input:
             interval_list = gtfToCallingIntervals.interval_list,
             scatter_count = scatterCount,
@@ -121,7 +130,7 @@ workflow rnaseq_pipeline_workflow {
 
 
     scatter (interval in ScatterIntervalList.out) {
-        call HaplotypeCaller {
+        call haplotypecaller.HaplotypeCaller {
             input:
                 input_bam = ApplyBQSR.output_bam,
                 input_bam_index = ApplyBQSR.output_bam_index,
@@ -142,7 +151,7 @@ workflow rnaseq_pipeline_workflow {
         File HaplotypeCallerOutputVcfIndex = HaplotypeCaller.output_vcf_index
     }
 
-    call MergeVCFs {
+    call mergeVCF.MergeVCFs {
         input:
             input_vcfs = HaplotypeCallerOutputVcf,
             input_vcfs_indexes =  HaplotypeCallerOutputVcfIndex,
@@ -152,7 +161,7 @@ workflow rnaseq_pipeline_workflow {
             gatk_path = gatk_path
     }
     
-    call VariantFiltration {
+    call variantfiltration.VariantFiltration {
         input:
             input_vcf = MergeVCFs.output_vcf,
             input_vcf_index = MergeVCFs.output_vcf_index,
