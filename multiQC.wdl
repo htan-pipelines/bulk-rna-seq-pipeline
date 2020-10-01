@@ -13,13 +13,13 @@ task MultiQC{
 
     # runtime values
 
-    #String docker = "quay.io/humancellatlas/secondary-analysis-star:v0.2.2-2.5.3a-40ead6e"
+    String docker = "quay.io/humancellatlas/secondary-analysis-star:v0.2.2-2.5.3a-40ead6e"
     Int machine_mem_mb
     Int cpu = 16
     # multiply input size by 2.2 to account for output bam file + 20% overhead, add size of reference.
     Int disk
     # by default request non preemptible machine to make sure the slow star alignment step completes
-    #Int preemptible = 0
+    Int preemptible = 0
 
 
 
@@ -47,11 +47,11 @@ task MultiQC{
 }
 
   runtime {
-   # docker: docker
+    docker: docker
     memory: "${machine_mem_mb} MiB"
     disks: "local-disk ${disk} SSD"
     cpu: cpu
-   # preemptible: preemptible
+    preemptible: preemptible
   }
     output {
     File multiqc_output_reseqc = "sample_multiqc_data/multiqc_rseqc_*.txt"
