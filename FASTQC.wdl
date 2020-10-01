@@ -8,14 +8,13 @@ task FASTQC {
     String RGline
     # runtime values
 
-    # String docker = "gcr.io/broad-cga-sanand-gtex/fastqc:latest"
+    String docker = "gcr.io/broad-cga-sanand-gtex/fastqc:latest"
     Int machine_mem_mb = ceil((size(fastq1, "Gi")) + 6) * 2200
     Int cpu = 16
     # multiply input size by 2.2 to account for output bam file + 20% overhead, add size of reference.
     Int disk = ceil((size(fastq1, "Gi") * 5.5))
     # by default request non preemptible machine to make sure the slow star alignment step completes
-    # Int preemptible = 0
-    Int NSLOTS
+    Int preemptible = 0
 
 
 
@@ -53,11 +52,11 @@ task FASTQC {
 
   runtime {
 
-    #docker: docker
+    docker: docker
     memory: "${machine_mem_mb} MiB"
     disks: "local-disk ${disk} SSD"
     cpu: cpu
-    #preemptible: preemptible
+    preemptible: preemptible
   }
    
 
