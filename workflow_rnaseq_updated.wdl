@@ -3,10 +3,10 @@
 
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/FASTQC.wdl" as fastqc
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/RSEQC_TIN.wdl" as rseqc_TIN
-import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:star_v1-0_BETA/versions/7/plain-WDL/descriptor" as star_wdl
-import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:markduplicates_v1-0_BETA/versions/5/plain-WDL/descriptor" as markduplicates_wdl
-import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:rsem_v1-0_BETA/versions/5/plain-WDL/descriptor" as rsem_wdl
-import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:rnaseqc2_v1-0_BETA/versions/2/plain-WDL/descriptor" as rnaseqc_wdl
+import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:star_v1-0_BETA/versions/8/plain-WDL/descriptor" as star_wdl
+import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:markduplicates_v1-0_BETA/versions/6/plain-WDL/descriptor" as markduplicates_wdl
+import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:rsem_v1-0_BETA/versions/6/plain-WDL/descriptor" as rsem_wdl
+import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:rnaseqc2_v1-0_BETA/versions/3/plain-WDL/descriptor" as rnaseqc_wdl
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/gtfToCallingIntervals.wdl" as gtftocallingintervals_wdl
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/SplitNCigarReads.wdl" as splitncigar
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/BaseRecalibrator.wdl" as basecalibrator
