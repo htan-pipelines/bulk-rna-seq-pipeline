@@ -4,6 +4,7 @@
 task FASTQC {
     File fastq1
     File? fastq2
+    String prefix
     # runtime values
 
     String docker = "gcr.io/broad-cga-sanand-gtex/fastqc:latest"
