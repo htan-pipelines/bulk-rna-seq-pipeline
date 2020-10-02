@@ -54,7 +54,7 @@ workflow rnaseq_pipeline_workflow {
     call markduplicates_wdl.markduplicates {
         input: input_bam=star.bam_file, prefix=prefix
     }
-    call rseqc_TIN.rseqc_TIN {
+    call rseqc_TIN.RSEQC_TIN {
         input: bam_input = star.bam_file, gene_bed = gene_bed, prefix=prefix
     }
     call rsem_wdl.rsem {
