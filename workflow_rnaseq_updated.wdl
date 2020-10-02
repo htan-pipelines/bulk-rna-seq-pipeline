@@ -60,7 +60,7 @@ workflow rnaseq_pipeline_workflow {
     }
 
     call rnaseqc_wdl.rnaseqc2 {
-        input: bam_file=markduplicates.bam_file, prefix=prefix
+        input: bam_file=markduplicates.bam_file, sample_id=prefix
     }
      
     call gtftocallingintervals_wdl.gtfToCallingIntervals {
