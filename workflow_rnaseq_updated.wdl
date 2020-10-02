@@ -34,13 +34,15 @@ workflow rnaseq_pipeline_workflow {
 
     File dbSnpVcf
     File dbSnpVcfIndex
-
+    File annotationsGTF
+    
+    Int preemptible_count
     Int? minConfidenceForVariantCalling
 
     ## Optional user optimizations
     Int? haplotypeScatterCount
     Int scatterCount = select_first([haplotypeScatterCount, 6])
-
+     
 
 
     call fastqc.FASTQC{
