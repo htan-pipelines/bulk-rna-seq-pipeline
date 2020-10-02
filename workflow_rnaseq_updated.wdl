@@ -74,8 +74,8 @@ workflow rnaseq_pipeline_workflow {
 
     call splitncigar.SplitNCigarReads {
         input:
-            input_bam = markduplicates.output_bam,
-            input_bam_index = markduplicates.output_bam_index,
+            input_bam = markduplicates.bam_file,
+            input_bam_index = markduplicates.bam_index,
             base_name = prefix + ".split",
             ref_fasta = refFasta,
             ref_fasta_index = refFastaIndex,
