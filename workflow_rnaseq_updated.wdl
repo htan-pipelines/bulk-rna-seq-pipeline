@@ -50,13 +50,13 @@ workflow rnaseq_pipeline_workflow {
         input: prefix=prefix
     }
     call markduplicates_wdl.markduplicates {
-        input: input_bam=2ndpass.bam_file, prefix=prefix
+        input: input_bam=star.bam_file, prefix=prefix
     }
     call reseqc_TIN.rseqc_TIN {
         input: bam_input = star.bam_file, gene_bed = gene_bed, prefix=prefix
     }
     call rsem_wdl.rsem {
-        input: transcriptome_bam=2ndpass.transcriptome_bam, prefix=prefix
+        input: transcriptome_bam=star.transcriptome_bam, prefix=prefix
     }
 
     call rnaseqc_wdl.rnaseqc2 {
