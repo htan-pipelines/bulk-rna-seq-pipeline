@@ -27,7 +27,7 @@ task RSEQC_TIN {
     preemptible: preemptible
   }
   output {
-   File TIN_summary = "${sampleID}.summary.txt"
+   File TIN_summary = "${prefix}.summary.txt"
   }
 }
 workflow RSEQC_TIN_workflow{
