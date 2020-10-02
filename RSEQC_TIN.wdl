@@ -5,7 +5,7 @@ task RSEQC_TIN {
 
     # runtime values
 
-    String docker = "quay.io/humancellatlas/secondary-analysis-star:v0.2.2-2.5.3a-40ead6e"
+    String rseqc_docker
     Int machine_mem_mb = ceil((size(bam_input, "Gi")) + 6) * 1100
     Int cpu = 16
     # multiply input size by 2.2 to account for output bam file + 20% overhead, add size of reference.
@@ -20,7 +20,7 @@ task RSEQC_TIN {
 
   runtime {
 
-    docker: docker
+    docker: rseqc_docker
     memory: "${machine_mem_mb} MiB"
     disks: "local-disk ${disk} SSD"
     cpu: cpu
