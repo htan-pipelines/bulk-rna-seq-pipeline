@@ -7,7 +7,7 @@ task FASTQC {
     String prefix
     # runtime values
 
-    String docker = "gcr.io/broad-cga-sanand-gtex/fastqc:latest"
+    String fastqc_docker
     Int machine_mem_mb = ceil((size(fastq1, "Gi")) + 6) * 2200
     Int cpu = 16
     # multiply input size by 2.2 to account for output bam file + 20% overhead, add size of reference.
@@ -51,7 +51,7 @@ task FASTQC {
 
   runtime {
 
-    docker: docker
+    docker: fastqc_docker
     memory: "${machine_mem_mb} MiB"
     disks: "local-disk ${disk} SSD"
     cpu: cpu
