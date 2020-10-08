@@ -60,8 +60,8 @@ task FASTQC {
    
 
    output{
-    File fastqc_html=*_fastqc.html"
-    File fastqc_zip=*_fastqc.zip"
+    File fastqc_html="*_fastqc.html"
+    File fastqc_zip="*_fastqc.zip"
   }
 }
 
