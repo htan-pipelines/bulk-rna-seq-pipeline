@@ -60,8 +60,8 @@ task FASTQC {
    
 
    output{
-    File fastqc_html=glob("*_fastqc.html")[0]
-    File fastqc_zip=glob("*_fastqc.zip")[0]
+    File fastqc_html=*_fastqc.html"
+    File fastqc_zip=*_fastqc.zip"
   }
 }
 
