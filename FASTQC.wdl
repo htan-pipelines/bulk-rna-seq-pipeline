@@ -10,7 +10,7 @@ task FASTQC {
     String fastqc_docker
     Int machine_mem_mb = ceil((size(fastq1, "Gi")) + 6) * 2200
     Int cpu = 16
-    # multiply input size by 2.2 to account for output fastq file + 20% overhead, add size of reference.
+    # multiply input size by 2.2 to account for fastq file size + 20% overhead, add size of reference.
     Int disk = ceil((size(fastq1, "Gi") * 5.5))
     # by default request non preemptible machine
     Int preemptible = 0
