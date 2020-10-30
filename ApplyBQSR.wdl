@@ -2,7 +2,7 @@ task ApplyBQSR {
 
     File input_bam
     File input_bam_index
-    String base_name
+    String prefix
     File recalibration_report
 
     File ref_dict
