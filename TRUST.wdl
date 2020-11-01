@@ -4,7 +4,7 @@ task TRUST {
     File input_bam
     String trust_path
     String prefix
-	  String docker
+    String docker
     Int preemptible_count
 
     command <<<
@@ -20,7 +20,7 @@ task TRUST {
 
         runtime {
         disks: "local-disk 1 HDD"
-        memory: "2 GB"
+        memory: "8 GB"
         docker: docker
         preemptible: preemptible_count
     }
