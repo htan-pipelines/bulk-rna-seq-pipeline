@@ -5,8 +5,8 @@ task somalier_extract {
     File ref_fasta
     File input_vcf
 
-	String docker
-  Int preemptible_count
+    String docker
+    Int preemptible_count
 
     command <<<
           somalier extract --d 'pwd'/ --sites ${known_indel_sites_VCF}  --fasta ${ref_fasta}  ${input_vcf}
@@ -18,7 +18,7 @@ task somalier_extract {
 
         runtime {
         disks: "local-disk 1 HDD"
-        memory: "2 GB"
+        memory: "8 GB"
         docker: docker
         preemptible: preemptible_count
     }
