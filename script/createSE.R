@@ -3,14 +3,14 @@ library(biomaRt)
 library(GenomicFeatures)
 library(SummarizedExperiment)
 
-read.wsv <- function (file, ...) {
-  read.table(
-    file, header=TRUE, check.names=FALSE, stringsAsFactors=FALSE,
-    ...
-  )
-}
-
 create_se <- function(input, tinfile, gtf, gene, isoform) {
+  
+  read.wsv <- function (file, ...) {
+    read.table(
+      file, header=TRUE, check.names=FALSE, stringsAsFactors=FALSE,
+      ...
+      )
+  }
   
   output <- list()
   #load input file
