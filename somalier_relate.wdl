@@ -1,15 +1,14 @@
 
 task somalier_relate {
     String prefix
-    Array[File] somalier_counts
+    File somalier_counts
     File ped_input
     File input_vcf
-
-	String docker
-  Int preemptible_count
+    String docker
+    Int preemptible_count
 
     command <<<
-          somalier relate --ped ${ped_input} ${sep=" " somalier_counts}
+          somalier relate --ped ${ped_input} ${somalier_counts}
     >>>
 
         output {
