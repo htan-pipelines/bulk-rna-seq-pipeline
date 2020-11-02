@@ -21,7 +21,8 @@ task somalier_extract {
         memory: "8 GB"
         docker: docker
         preemptible: preemptible_count
-    }
+    }    
+}
 workflow somalier_extraction {
   call somalier_extract
   }
