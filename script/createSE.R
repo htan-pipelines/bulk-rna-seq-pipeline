@@ -1,9 +1,8 @@
 #!/usr/bin/env Rscript
-library(biomaRt)
-library(GenomicFeatures)
-library(SummarizedExperiment)
-
 create_se <- function(input, tinfile, gtf, gene, isoform) {
+  library(biomaRt)
+  library(GenomicFeatures)
+  library(SummarizedExperiment)  
   
   read.wsv <- function (file, ...) {
     read.table(
