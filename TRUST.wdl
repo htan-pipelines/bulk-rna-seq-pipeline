@@ -24,7 +24,7 @@ task TRUST {
         docker: docker
         preemptible: preemptible_count
     }
-    
+}    
 workflow TRUST_workflow {
   call TRUST
   }
