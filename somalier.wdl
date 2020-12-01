@@ -1,15 +1,14 @@
 task somalier_extract {
     String prefix
     Array[File] known_indels_sites_VCFs
-    Array[File] known_indels_sites_indices
     File ref_fasta
-    File input_vcf
+    File input_bam
 
-	String docker
-  Int preemptible_count
+    String docker
+    Int preemptible_count
 
     command <<<
-          somalier extract --d 'pwd'/ --sites ${known_indel_sites_VCF}  --fasta ${ref_fasta}  ${input_vcf}
+          somalier extract --d `pwd`/ --sites ${known_indel_sites_VCF}  --fasta ${ref_fasta}  ${input_bam}
     >>>
 
         output {
