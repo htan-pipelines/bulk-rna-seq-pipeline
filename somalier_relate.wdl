@@ -1,9 +1,7 @@
 
 task somalier_relate {
-    String prefix
     File somalier_counts
     File ped_input
-    File input_vcf
     String docker
     Int preemptible_count
 
