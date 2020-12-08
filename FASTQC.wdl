@@ -15,6 +15,8 @@ task FASTQC {
     # by default request non preemptible machine
     Int preemptible = 0
 
+    String fastq1_name = sub(sub(basename(fastq1), "\\.fastq.gz$", ""), "\\.fq.gz$", "" )
+    String fastq2_name = sub(sub(basename(fastq2), "\\.fastq.gz$", ""), "\\.fq.gz$", "" )
 
 
   command {
@@ -60,8 +62,10 @@ task FASTQC {
    
 
    output{
-    File fastqc_html="*_fastqc.html"
-    File fastqc_zip="*_fastqc.zip"
+    File fastqc1_html="${fastq1_name}_fastqc.html"
+    File fastqc1_zip="${fastq1_name}_fastqc.zip"
+    File fastqc2_html="${fastq2_name}_fastqc.html"
+    File fastqc2_zip="${fastq2_name}_fastqc.zip"
   }
 }
 
