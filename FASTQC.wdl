@@ -46,7 +46,7 @@ task FASTQC {
         echo $fastq1_abs
         echo $fastq2_abs
       
-        fastqc -t 1 -o . \
+        /FastQC/fastqc -t 1 -o . \
         $fastq1_abs $fastq2_abs
  }
 
