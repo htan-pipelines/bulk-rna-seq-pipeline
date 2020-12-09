@@ -15,7 +15,7 @@ task RSEQC_TIN {
 
   
   command {
-     tin.py -i ${bam_input} -r ${gene_bed} > ${prefix}.summary.txt
+     /usr/local/bin/tin.py -i ${bam_input} -r ${gene_bed} > ${prefix}.summary.txt
      }
 
   runtime {
