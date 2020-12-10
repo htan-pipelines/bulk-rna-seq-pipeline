@@ -1,6 +1,5 @@
 
 
-
 task FASTQC {
     File fastq1
     File? fastq2
@@ -15,13 +14,12 @@ task FASTQC {
     # by default request non preemptible machine
     Int preemptible = 0
 
-    String fastq_name = sub(sub(basename(fastq1), "\\.fastq.gz$", ""), "\\.fq.gz$", "" )
-
 
 
   command {
-        /FastQC/fastqc -t 1 -o . \
-        $fastq1 $fastq2
+        set -euo pipefail
+        fastqc -t 1 -o '.' \
+        ${fastq1} ${fastq2}
  }
 
 
@@ -36,8 +34,8 @@ task FASTQC {
    
 
    output{
-    File fastqc_html="${fastq_name}_fastqc.html"
-    File fastqc_zip="${fastq_name}_fastqc.zip"
+    File fastqc_html=glob("*_fastqc.html")[0]
+    File fastqc_zip=glob("*_fastqc.zip")[0]
   }
 }
 
