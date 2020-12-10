@@ -18,7 +18,7 @@ task FASTQC {
 
   command {
         set -euo pipefail
-        fastqc -t 1 -o '.' \
+        /FastQC/fastqc -t 1 -o '.' \
         ${fastq1} ${fastq2}
  }
 
