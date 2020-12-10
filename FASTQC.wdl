@@ -20,34 +20,8 @@ task FASTQC {
 
 
   command {
-      
-      
-        if [[ ${fastq1} == *".tar" || ${fastq1} == *".tar.gz" ]]; then
-            tar -xvvf ${fastq1}
-            fastq1_abs=$(for f in *_1.fastq*; do echo "$(pwd)/$f"; done | paste -s -d ',')
-            fastq2_abs=$(for f in *_2.fastq*; do echo "$(pwd)/$f"; done | paste -s -d ',')
-            if [[ $fastq1_abs == *"*_1.fastq*" ]]; then  # no paired-end FASTQs found; check for single-end FASTQ
-                fastq1_abs=$(for f in *.fastq*; do echo "$(pwd)/$f"; done | paste -s -d ',')
-                fastq2_abs=''
-            fi
-        else
-            # make sure paths are absolute
-            fastq1_abs=${fastq1}
-            fastq2_abs=${fastq2}
-            if [[ $fastq1_abs != /* ]]; then
-                fastq1_abs=$PWD/$fastq1_abs
-                fastq2_abs=$PWD/$fastq2_abs
-            fi
-        fi
-
-
-
-        echo "FASTQs:"
-        echo $fastq1_abs
-        echo $fastq2_abs
-      
         /FastQC/fastqc -t 1 -o . \
-        $fastq1_abs $fastq2_abs
+        $fastq1 $fastq2
  }
 
 
