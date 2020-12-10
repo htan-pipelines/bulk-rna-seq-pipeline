@@ -15,6 +15,8 @@ task RSEQC_TIN {
 
   
   command {
+     set -euo pipefail
+     
      /usr/local/bin/tin.py -i ${bam_input} -r ${gene_bed} > ${prefix}.summary.txt
      }
 
