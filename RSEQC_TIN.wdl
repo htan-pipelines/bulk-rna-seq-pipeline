@@ -1,5 +1,6 @@
 task RSEQC_TIN {
     File bam_input
+    File bam_index
     File gene_bed
     String prefix
 
@@ -15,8 +16,10 @@ task RSEQC_TIN {
 
   
   command {
+
      set -euo pipefail
-     
+     echo "Bam_Index:"
+     echo ${bam_index}
      /usr/local/bin/tin.py -i ${bam_input} -r ${gene_bed} > ${prefix}.summary.txt
      }
 
