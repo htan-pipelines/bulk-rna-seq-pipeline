@@ -23,7 +23,7 @@ task RSEQC_TIN {
      echo "Bam_Index:"
      echo ${bam_index}
      
-     /usr/local/bin/tin.py -i ${bam_input} -r ${gene_bed} > ${prefix}.summary.txt
+     tin.py -i ${bam_input} -r ${gene_bed} > ${prefix}.summary.txt
      }
 
   runtime {
