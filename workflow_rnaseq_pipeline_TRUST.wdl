@@ -1,5 +1,5 @@
 
-#Cromwell version 52
+#Cromwell version 54
 
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/FASTQC.wdl" as fastqc
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/RSEQC_TIN.wdl" as rseqc_TIN
@@ -42,7 +42,6 @@ workflow rnaseq_pipeline_workflow {
     Int preemptible_count
     Int? minConfidenceForVariantCalling
 
-    ## Optional user optimizations
     Int? haplotypeScatterCount
     Int scatterCount = select_first([haplotypeScatterCount, 6])
      
