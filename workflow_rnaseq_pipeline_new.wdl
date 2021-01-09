@@ -47,7 +47,7 @@ workflow rnaseq_pipeline_workflow {
     Int? haplotypeScatterCount
     Int scatterCount = select_first([haplotypeScatterCount, 6])
      
-
+    File uBam
 
     call fastqc.FASTQC{
         input: prefix=prefix
@@ -79,44 +79,44 @@ workflow rnaseq_pipeline_workflow {
     }
     
     call revertSam.RevertSam {
-		input:
-			input_bam = uBam,
-			base_name = prefix + ".reverted",
-			sort_order = "queryname",
-			preemptible_count = preemptible_count,
-			docker = gatk4_docker,
-			gatk_path = gatk_path
+	input:
+		input_bam = uBam,
+		base_name = prefix + ".reverted",
+		sort_order = "queryname",
+		preemptible_count = preemptible_count,
+		docker = gatk4_docker,
+		gatk_path = gatk_path
 	}
     
     call Samtofastq.SamToFastq {
-		input:
-			unmapped_bam = RevertSam.output_bam,
-			base_name = prefix,
-			preemptible_count = preemptible_count,
-			docker = gatk4_docker,
-			gatk_path = gatk_path
+	input:
+		unmapped_bam = RevertSam.output_bam,
+		base_name = prefix,
+		preemptible_count = preemptible_count,
+		docker = gatk4_docker,
+		gatk_path = gatk_path
 	}
     
     
-	call Mergebamalignment.MergeBamAlignment {
-		input: 
-			unaligned_bam = RevertSam.output_bam,
-			star_bam = star.bam_file,
-			base_name = ".merged",
-			ref_fasta = refFasta,
-			ref_dict = refDict,
-			preemptible_count = preemptible_count,
-			docker = gatk4_docker,
-			gatk_path = gatk_path
+    call Mergebamalignment.MergeBamAlignment {
+	 input: 
+		unaligned_bam = RevertSam.output_bam,
+		star_bam = star.bam_file,
+		base_name = ".merged",
+		ref_fasta = refFasta,
+		ref_dict = refDict,
+		preemptible_count = preemptible_count,
+		docker = gatk4_docker,
+		gatk_path = gatk_path
 	}
     
     call markduplicates.MarkDuplicates {
-		input:
-			input_bam = MergeBamAlignment.output_bam,
-			base_name = prefix + ".dedupped",
-			preemptible_count = preemptible_count,
-			docker = gatk4_docker,
-			gatk_path = gatk_path
+	input:
+		input_bam = MergeBamAlignment.output_bam,
+		base_name = prefix + ".dedupped",
+		preemptible_count = preemptible_count,
+		docker = gatk4_docker,
+		gatk_path = gatk_path
 	}
     
     call splitncigar.SplitNCigarReads {
