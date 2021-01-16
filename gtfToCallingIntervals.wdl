@@ -19,9 +19,9 @@ task gtfToCallingIntervals {
 
         ${gatk_path} \
             BedToIntervalList \
-            -I=exome.fixed.bed \
-            -O=${output_name} \
-            -SD=${ref_dict}
+            -I exome.fixed.bed \
+            -O ${output_name} \
+            -SD ${ref_dict}
     >>>
 
     output {
