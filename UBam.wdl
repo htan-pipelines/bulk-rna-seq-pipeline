@@ -46,5 +46,5 @@ task UBam {
 }
 
 workflow UBam_workflow {
-  call Ubam
+  call UBam
 }
