@@ -10,7 +10,7 @@ import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:rnaseqc2_v1
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/gtfToCallingIntervals.wdl" as gtftocallingintervals_wdl
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/SamToFastq.wdl" as Samtofastq
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/RevertSam.wdl" as revertSam
-import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/MergeAlignment.wdl" as Mergebamalignment
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/MergeBamAlignment.wdl" as Mergebamalignment
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/MarkDuplicates.wdl" as markduplicates
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/SplitNCigarReads.wdl" as splitncigar
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/BaseRecalibrator.wdl" as basecalibrator
