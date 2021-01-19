@@ -28,6 +28,8 @@ task RevertSam {
         disks: "local-disk " + sub(((size(input_bam,"GB")+1)*5),"\\..*","") + " HDD"
         memory: "4 GB"
         preemptible: preemptible_count
+     }
+    
     }
     
     workflow RevertSam_workflow {
