@@ -34,18 +34,17 @@ task UnmappedBAM {
     --PLATFORM ${platform_name} \
     --SEQUENCING_CENTER ${sequencing_center} 
   >>>
-  
+    output {
+    File output_unmapped_bam = "${readgroup_name}.unmapped.bam"
+  }
   runtime {
     docker: docker
     memory: machine_mem_gb + " GB"
     disks: "local-disk " + disk_space_gb + " HDD"
     preemptible: preemptible_attempts
   }
-  output {
-    File output_unmapped_bam = "${readgroup_name}.unmapped.bam"
-  }
 }
 
-workflow UBam_workflow {
+workflow UnmappedBAM_workflow {
   call UnmappedBAM
 }
