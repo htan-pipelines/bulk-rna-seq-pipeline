@@ -29,7 +29,7 @@ task FastqToSam {
 	>>>
 
 	output {
-		File unmapped_output_bam = "${readgroup_name}.unmapped.bam"
+		File unmapped_output_bam = "${readgroup}.unmapped.bam"
 	}
 
 	runtime {
