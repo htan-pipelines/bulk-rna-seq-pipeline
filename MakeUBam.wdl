@@ -44,6 +44,6 @@ task MakeUBam {
   }
 }
 
-workflow UBam_workflow {
+workflow MakeUBam_workflow {
   call MakeUBam
 }
