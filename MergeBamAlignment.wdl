@@ -28,6 +28,7 @@ task MergeBamAlignment {
     output {
         File output_bam="${base_name}.bam"
     }
+}
 workflow MergeBamAlignment_workflow {
   call MergeBamAlignment
 }
