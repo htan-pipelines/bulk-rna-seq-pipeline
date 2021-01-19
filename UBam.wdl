@@ -1,5 +1,4 @@
 task UnmappedBAM {
-  input {
     # Command parameters
     String sample_name
     File fastq_1
@@ -17,10 +16,9 @@ task UnmappedBAM {
     Int machine_mem_gb = 7
     Int preemptible_attempts = 3
     String docker
-  }
     Int command_mem_gb = machine_mem_gb - 1
     Int disk_space_gb = ceil((size(fastq_1, "GB") + size(fastq_2, "GB")) * 2 ) + addtional_disk_space_gb
-  command {
+  command <<<
     ${gatk_path} --java-options "-Xmx${command_mem_gb}g" \
     FastqToSam \
     --FASTQ ${fastq_1} \
@@ -33,7 +31,8 @@ task UnmappedBAM {
     --RUN_DATE ${run_date} \
     --PLATFORM ${platform_name} \
     --SEQUENCING_CENTER ${sequencing_center} 
-  }
+  >>>
+  
   runtime {
     docker: docker
     memory: machine_mem_gb + " GB"
