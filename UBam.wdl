@@ -21,7 +21,7 @@ task UnmappedBAM {
     Int command_mem_gb = machine_mem_gb - 1
     Int disk_space_gb = ceil((size(fastq_1, "GB") + size(fastq_2, "GB")) * 2 ) + addtional_disk_space_gb
   command {
-    ~{gatk_path} --java-options "-Xmx~{command_mem_gb}g" \
+    ${gatk_path} --java-options "-Xmx${command_mem_gb}g" \
     FastqToSam \
     --FASTQ ${fastq_1} \
     --FASTQ2 ${fastq_2} \
