@@ -14,8 +14,8 @@ task FastqToSam {
 	  Int preemptible_count
 
 	command <<<
-	 	${gatk_path} \
-	 	    FastqToSam \
+	${gatk_path} \
+	FastqToSam \
         F1=${fastq1} \
         F2=${fastq2} \
         O=${read_group}.unmapped.bam \
@@ -29,7 +29,7 @@ task FastqToSam {
 	>>>
 
 	output {
-		File unmapped_output_bam = "${readgroup}.unmapped.bam"
+		File unmapped_output_bam = "${read_group}.unmapped.bam"
 	}
 
 	runtime {
