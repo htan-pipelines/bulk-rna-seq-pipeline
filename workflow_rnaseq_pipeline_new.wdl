@@ -19,12 +19,13 @@ import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/m
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/HaplotypeCaller.wdl" as haplotypecaller
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/MergeVCFs.wdl" as mergeVCF
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/VariantFiltration.wdl" as variantfiltration
-import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/UBam.wdl" as UBam
+
 workflow rnaseq_pipeline_workflow {
 
     File refFasta
     File refFastaIndex
     File refDict
+    File UBam
     
     String prefix
     File gene_bed
@@ -81,7 +82,7 @@ workflow rnaseq_pipeline_workflow {
     
     call revertSam.RevertSam {
 	input:
-		input_bam = UBAM.output_unmapped_bam,
+		input_bam = UBam,
 		base_name = prefix + ".reverted",
 		sort_order = "queryname",
 		preemptible_count = preemptible_count,
