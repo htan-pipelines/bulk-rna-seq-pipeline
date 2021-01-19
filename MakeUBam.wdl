@@ -1,4 +1,4 @@
-task UnmappedBAM {
+task MakeUBam {
     # Command parameters
     String sample_name
     File fastq_1
@@ -45,5 +45,5 @@ task UnmappedBAM {
 }
 
 workflow UBam_workflow {
-  call UnmappedBAM
+  call MakeUBam
 }
