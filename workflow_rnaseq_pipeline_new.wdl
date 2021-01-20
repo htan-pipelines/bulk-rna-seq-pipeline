@@ -27,7 +27,6 @@ workflow rnaseq_pipeline_workflow {
     File refFasta
     File refFastaIndex
     File refDict
-    File UBam
     
     String prefix
     File gene_bed
