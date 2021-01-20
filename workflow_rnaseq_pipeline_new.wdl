@@ -19,6 +19,8 @@ import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/m
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/HaplotypeCaller.wdl" as haplotypecaller
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/MergeVCFs.wdl" as mergeVCF
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/VariantFiltration.wdl" as variantfiltration
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/FastqToSam.wdl" as FastqToSam_wdl
+
 
 workflow rnaseq_pipeline_workflow {
 
@@ -48,7 +50,7 @@ workflow rnaseq_pipeline_workflow {
     Int? haplotypeScatterCount
     Int scatterCount = select_first([haplotypeScatterCount, 6])
     
-    call UBam.UBAM{
+    call FastqToSam_wdl.FastqToSam{
       input: sample_name = prefix, docker = gatk4_docker, gatk_path = gatk_path
     }
     call fastqc.FASTQC{
@@ -82,7 +84,7 @@ workflow rnaseq_pipeline_workflow {
     
     call revertSam.RevertSam {
 	input:
-		input_bam = UBam,
+		input_bam = FastqToSam.unmapped_output_bam,
 		base_name = prefix + ".reverted",
 		sort_order = "queryname",
 		preemptible_count = preemptible_count,
