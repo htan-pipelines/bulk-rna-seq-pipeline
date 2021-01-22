@@ -7,7 +7,7 @@ task rsem_reference {
     String species="Homo sapiens"
     String ucsc_build="hg38"
     String assembly="GRCh38"
-    String ensembl=94
+    String ensembl="100"
     String type="base"
 
     Int memory
