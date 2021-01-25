@@ -28,6 +28,12 @@ task MergeBamAlignment {
     output {
         File output_bam="${base_name}.bam"
     }
+    runtime {
+        docker: docker
+        disks: "local-disk " + sub(((size(unaligned_bam,"GB")+size(star_bam,"GB")+1)*5),"\\..*","") + " HDD"
+        memory: "4 GB"
+        preemptible: preemptible_count
+    }
 }
 workflow MergeBamAlignment_workflow {
   call MergeBamAlignment
