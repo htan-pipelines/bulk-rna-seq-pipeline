@@ -20,11 +20,11 @@ task FastqToSam {
         F1=${fastq1} \
         F2=${fastq2} \
         O=${read_group}.unmapped.bam \
-        SM=${sample_name} \
         RG=${read_group} \
-        LB=${library_name} \
+	LB=${library_name} \
+	PL=${platform_name} \
+	SM=${sample_name} \
         PU=${platform_unit} \
-        PL=${platform_name} \
 	PM=${platform_model} \
         
 	>>>
