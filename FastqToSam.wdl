@@ -7,6 +7,7 @@ task FastqToSam {
     String platform_unit
     String platform_name
     String sequencing_center
+    String platform_model
 
     String gatk_path
 
@@ -24,7 +25,7 @@ task FastqToSam {
         LB=${library_name} \
         PU=${platform_unit} \
         PL=${platform_name} \
-        CN=${sequencing_center} 
+	PM=${platform_model} \
         
 	>>>
 
