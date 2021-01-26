@@ -36,7 +36,7 @@ task BaseRecalibrator {
     }
 
     runtime {
-        memory: "6 GB"
+        memory: "16 GB"
         disks: "local-disk " + sub((size(input_bam,"GB")*3)+30, "\\..*", "") + " HDD"
         docker: docker
         preemptible: preemptible_count
