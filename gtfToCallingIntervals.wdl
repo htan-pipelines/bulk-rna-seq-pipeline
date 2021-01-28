@@ -1,6 +1,9 @@
 task gtfToCallingIntervals {
     File gtf
     File ref_dict
+    Int memory
+    Int disk_space
+    Int num_threads
 
     String output_name = basename(gtf, ".gtf") + ".exons.interval_list"
 
@@ -30,6 +33,9 @@ task gtfToCallingIntervals {
 
     runtime {
         docker: docker
+        memory: "${memory}GB"
+        disks: "local-disk ${disk_space} HDD"
+        cpu: "${num_threads}"
         preemptible: preemptible_count
     }
 }
