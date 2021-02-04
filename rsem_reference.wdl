@@ -27,7 +27,7 @@ task rsem_reference {
         dict_chr_regex="$(IFS="|"; echo "^(${dict_chr[*]})\t")"
         
         rsem-prepare-reference \
-            --gtf <(grep -P "${dict_chr_regex}" ${gtf_file}) \
+            --gtf <(grepz -P "${dict_chr_regex}" ${gtf_file}) \
             ${fasta_path} ${ucsc_build}
 
     }
