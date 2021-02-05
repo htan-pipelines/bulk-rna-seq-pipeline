@@ -43,7 +43,7 @@ task STAR {
         echo $fastq2_abs
     
 		mkdir star_index
-    tar -xvvf ${star_index} -C star_index --strip-components=1
+                tar -xvvf ${star_index} -C star_index --strip-components=1
 
 		STAR \
 		--genomeDir star_index \
@@ -55,8 +55,8 @@ task STAR {
 		--twopassMode Basic \
 		--limitBAMsortRAM ${star_mem+"000000000"} \
 		--limitOutSJcollapsed ${default=1000000 star_limitOutSJcollapsed} \
-    --quantMode TranscriptomeSAM GeneCounts
-    --outSAMattrRGline ${RG_line}
+                --quantMode TranscriptomeSAM GeneCounts
+                --outSAMattrRGline ${RG_line}
 		--outFileNamePrefix ${base_name}.
 	>>>
 
