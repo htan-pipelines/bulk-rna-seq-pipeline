@@ -62,9 +62,9 @@ task STAR {
 
 	output {
 		File bam_file = "${base_name}.Aligned.sortedByCoord.out.bam"
-    File bam_index= "${base_name}.Aligned.sortedByCoord.out.bam.bai"
-    File transcriptome_bam = "${base_name}.Aligned.toTranscriptome.out.bam"
-    File read_counts = "${base_name}.ReadsPerGene.out.tab.gz"
+    		File bam_index= "${base_name}.Aligned.sortedByCoord.out.bam.bai"
+   	        File transcriptome_bam = "${base_name}.Aligned.toTranscriptome.out.bam"
+                File read_counts = "${base_name}.ReadsPerGene.out.tab.gz"
 		File output_log_final = "${base_name}.Log.final.out"
 		File output_log = "${base_name}.Log.out"
 		File output_log_progress = "${base_name}.Log.progress.out"
