@@ -16,7 +16,7 @@ task Star {
 	Int add_to_disk = select_first([additional_disk, 0])
 	String docker
 	Int preemptible_count
-  String ${RG_line}
+        String ${RG_line}
 
 	command <<<
     set -euo pipefail
