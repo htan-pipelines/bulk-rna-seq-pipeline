@@ -16,7 +16,7 @@ task STAR {
 	Int add_to_disk = select_first([additional_disk, 0])
 	String docker
 	Int preemptible_count
-        String ${RG_line}
+        String RG_line
 
 	command <<<
         set -euo pipefail
@@ -70,6 +70,7 @@ task STAR {
 		File output_log_progress = "${base_name}.Log.progress.out"
 		File output_SJ = "${base_name}.SJ.out.tab"
 	}
+}
 workflow STAR_workflow {
   call STAR
 }
