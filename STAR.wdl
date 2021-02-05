@@ -19,7 +19,7 @@ task Star {
         String ${RG_line}
 
 	command <<<
-    set -euo pipefail
+        set -euo pipefail
         if [[ ${fastq1} == *".tar" || ${fastq1} == *".tar.gz" ]]; then
             tar -xvvf ${fastq1}
             fastq1_abs=$(for f in *_1.fastq*; do echo "$(pwd)/$f"; done | paste -s -d ',')
