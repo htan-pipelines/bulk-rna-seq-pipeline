@@ -16,7 +16,7 @@ import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/m
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/MergeVCFs.wdl" as mergeVCF
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/VariantFiltration.wdl" as variantfiltration
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/rsem_reference.wdl" as rsem_reference_wdl
-
+import  "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/ReadGroup.wdl" as readgroup_wdl
 
 workflow rnaseq_pipeline_workflow {
 
@@ -25,6 +25,11 @@ workflow rnaseq_pipeline_workflow {
     File refDict
     
     String prefix
+    String RG_ID
+    String library_id
+    String platform
+    String platform_unit
+    String platform_model
     File gene_bed
     String? gatk4_docker_override
     String gatk4_docker = select_first([gatk4_docker_override, "broadinstitute/gatk:latest"])
@@ -45,11 +50,14 @@ workflow rnaseq_pipeline_workflow {
     Int? haplotypeScatterCount
     Int scatterCount = select_first([haplotypeScatterCount, 6])
     
+    call readgroup_wdl.ReadGroup {
+        input: SM=prefix, RG=RG_ID, LB=library_id, PL=platform, PU=platform_unit, PM=platform_model
+    }
     call fastqc.FASTQC{
         input: prefix=prefix
     }     
     call star_wdl.star {
-        input: prefix=prefix, outSAMattrRGline = readgroup.RGline
+        input: prefix=prefix, outSAMattrRGline = ReadGroup.RGline
     }
     call markduplicates_wdl.markduplicates {
         input: input_bam=star.bam_file, prefix=prefix
