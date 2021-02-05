@@ -1,4 +1,4 @@
-task Star {
+task STAR {
 	File star_index
 	File fastq1
 	File? fastq2
@@ -70,3 +70,6 @@ task Star {
 		File output_log_progress = "${base_name}.Log.progress.out"
 		File output_SJ = "${base_name}.SJ.out.tab"
 	}
+workflow STAR_workflow {
+  call STAR
+}
