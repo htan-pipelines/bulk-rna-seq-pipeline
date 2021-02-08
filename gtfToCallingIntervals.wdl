@@ -12,6 +12,7 @@ task gtfToCallingIntervals {
     Int preemptible_count
 
     command <<<
+        set -euo pipefail
         Rscript --no-save -<<'RCODE'
             gtf = read.table("${gtf}", sep="\t")
             gtf = subset(gtf, V3 == "exon")
