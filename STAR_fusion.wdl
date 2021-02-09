@@ -2,7 +2,6 @@ task star_fusion_kickstart {
     File? chimeric_out_junction
     File genome
     String sample_id
-    String zones
     Int preemptible
     String docker
     Int cpu
@@ -40,7 +39,6 @@ task star_fusion_kickstart {
     disks: "local-disk " + ceil((fastq_disk_space_multiplier * (size(chimeric_out_junction, "GB"))) + size(genome, "GB") * genome_disk_space_multiplier + extra_disk_space) + " " + (if use_ssd then "SSD" else "HDD")
     docker: "${docker}"
     cpu: "${cpu}"
-    zones: zones
     memory: "${memory}"
   }
 
