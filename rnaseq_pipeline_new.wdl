@@ -63,7 +63,7 @@ workflow rnaseq_pipeline_workflow {
         input: input_bam=star.bam_file, prefix=prefix
     }
     call rseqc_TIN.RSEQC_TIN {
-        input: bam_input = star.bam_file, gene_bed = gene_bed
+        input: bam_input = star.bam_file, gene_bed = gene_bed, bam_index = star.bam_index
     }
     
     call rsem_reference_wdl.rsem_ref {
