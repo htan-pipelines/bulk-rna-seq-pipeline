@@ -15,7 +15,7 @@ import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/m
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/HaplotypeCaller.wdl" as haplotypecaller
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/MergeVCFs.wdl" as mergeVCF
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/VariantFiltration.wdl" as variantfiltration
-import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/rsem_reference.wdl" as rsem_reference_wdl
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/rsem_reference_francois.wdl" as rsem_reference_wdl
 import  "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/ReadGroup.wdl" as readgroup_wdl
 
 workflow rnaseq_pipeline_workflow {
@@ -57,7 +57,7 @@ workflow rnaseq_pipeline_workflow {
         input: prefix=prefix
     }     
     call star_wdl.star {
-        input: prefix=prefix, outSAMattrRGline = ReadGroup.RGline
+        input: prefix=prefix, outSAMattrRGline = ReadGroup.Read_group_line
     }
     call markduplicates_wdl.markduplicates {
         input: input_bam=star.bam_file, prefix=prefix
@@ -67,7 +67,7 @@ workflow rnaseq_pipeline_workflow {
     }
     
     call rsem_reference_wdl.rsem_ref {
-        input: fasta_path = refFasta, gtf_path = annotationsGTF, dict_file = refDict
+        input: reference_fasta = refFasta, annotation_gtf = annotationsGTF, prefix=prefix
     }
     
     call rsem_wdl.rsem {
