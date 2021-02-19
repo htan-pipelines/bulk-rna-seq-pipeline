@@ -15,7 +15,7 @@ task MergeVCFs {
     command <<<
         ${gatk_path} --java-options "-Xms2000m"  \
             MergeVcfs \
-            --INPUT ${sep=' --INPUT=' input_vcfs} \
+            --INPUT ${sep=' --INPUT ' input_vcfs} \
             --OUTPUT ${output_vcf_name}
     >>>
 
