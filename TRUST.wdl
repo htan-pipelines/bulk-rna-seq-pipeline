@@ -19,7 +19,7 @@ task TRUST {
         }
 
         runtime {
-        disks: "local-disk 1 HDD"
+        disks: "local-disk 64 HDD"
         memory: "8 GB"
         docker: docker
         preemptible: preemptible_count
