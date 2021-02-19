@@ -8,7 +8,7 @@ task TRUST {
     Int preemptible_count
 
     command <<<
-          ${trust_path} -b ${input_bam} -f ${ref_fasta} --ref ${ref_fasta_IMGT}
+          ${trust_path} -b ${input_bam} -f ${ref_fasta} --ref ${ref_fasta_IMGT} -o ${prefix}
 
     >>>
 
