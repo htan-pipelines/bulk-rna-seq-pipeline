@@ -12,11 +12,6 @@ task star_fusion_kickstart {
     String? additional_flags
     Boolean use_ssd
 
-
-  output {
-    File fusion_predictions = "${sample_id}/star-fusion.fusion_predictions.tsv"
-    File fusion_predictions_abridged = "${sample_id}/star-fusion.fusion_predictions.abridged.tsv"
-  }
   command <<<
 
         set -e
@@ -40,6 +35,10 @@ task star_fusion_kickstart {
     docker: "${docker}"
     cpu: "${cpu}"
     memory: "${memory}"
+  }
+  output {
+    File fusion_predictions = "${sample_id}/star-fusion.fusion_predictions.tsv"
+    File fusion_predictions_abridged = "${sample_id}/star-fusion.fusion_predictions.abridged.tsv"
   }
 
 }
