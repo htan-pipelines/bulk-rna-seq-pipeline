@@ -2,13 +2,12 @@ task TRUST {
     File ref_fasta_IMGT
     File ref_fasta
     File input_bam
-    String trust_path
     String prefix
     String docker
     Int preemptible_count
 
     command <<<
-          ${trust_path} -b ${input_bam} -f ${ref_fasta} --ref ${ref_fasta_IMGT} -o ${prefix}
+          /home/TRUST4/run-trust4 -b ${input_bam} -f ${ref_fasta} --ref ${ref_fasta_IMGT} -o ${prefix}
 
     >>>
 
