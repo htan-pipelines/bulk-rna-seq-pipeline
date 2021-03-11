@@ -4,6 +4,7 @@ task MiXCR {
     String docker
     String species
     String material
+    Int machine_mem_mb = ceil((size(fastq1, "Gi")) + 6) * 2200
     Int preemptible_count
     String prefix
 
@@ -19,7 +20,7 @@ task MiXCR {
 
         runtime {
         disks: "local-disk 1 HDD"
-        memory: "8 GB"
+        memory: "${machine_mem_mb} MiB"
         docker: docker
         preemptible: preemptible_count
         }
