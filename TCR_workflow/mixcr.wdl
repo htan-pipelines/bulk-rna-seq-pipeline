@@ -12,7 +12,7 @@ task MiXCR {
     >>>
         output {
         File report = "${prefix}.report"
-        File ALL = "${prefix}.clonotypes.all.txt"
+        File ALL = "${prefix}.clonotypes.ALL.txt"
         File clns = "${prefix}.clns"
         File vdjca = "${prefix}.vdjca"
         }
