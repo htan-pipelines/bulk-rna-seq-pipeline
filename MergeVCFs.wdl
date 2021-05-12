@@ -10,8 +10,7 @@ task MergeVCFs {
     String docker
     Int preemptible_count
 
-    # Using MergeVcfs instead of GatherVcfs so we can create indices
-    # See https://github.com/broadinstitute/picard/issues/789 for relevant GatherVcfs ticket
+
     command <<<
         ${gatk_path} --java-options "-Xms2000m"  \
             MergeVcfs \
@@ -20,8 +19,8 @@ task MergeVCFs {
     >>>
 
     output {
-        File output_vcf = output_vcf_name
-        File output_vcf_index = "${output_vcf_name}.tbi"
+        File merge_vcf = output_vcf_name
+        File merge_vcf_index = "${output_vcf_name}.tbi"
     }
 
     runtime {
