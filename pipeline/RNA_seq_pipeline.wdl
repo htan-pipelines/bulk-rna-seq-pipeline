@@ -181,8 +181,8 @@ workflow rnaseq_pipeline_workflow {
     
     call variantfiltration.VariantFiltration {
         input:
-            input_vcf = MergeVCFs.output_vcf,
-            input_vcf_index = MergeVCFs.output_vcf_index,
+            input_vcf = MergeVCFs.merge_vcf,
+            input_vcf_index = MergeVCFs.merge_vcf_index,
             base_name = prefix + ".variant_filtered.vcf.gz",
             ref_fasta = refFasta,
             ref_fasta_index = refFastaIndex,
