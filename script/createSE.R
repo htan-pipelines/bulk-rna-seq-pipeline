@@ -3,6 +3,7 @@
 #tinfile = RSEQC_TIN output text file
 #gene_file= RSEM output
 #isoform_file = RSEM output
+#sample.name = name of sample running through the pipeline (should be same as prefix)
 create_se <- function(input, tinfile, gtf, gene_file, isoform_file,sample.name) {
   library(biomaRt)
   library(GenomicFeatures)
