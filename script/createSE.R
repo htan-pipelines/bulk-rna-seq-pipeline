@@ -1,5 +1,9 @@
 #!/usr/bin/env Rscript
-create_se <- function(input, tinfile, gtf, gene, isoform) {
+#input = rnaseqc ouptut
+#tinfile = RSEQC_TIN output text file
+#gene_file= RSEM output
+#isoform_file = RSEM output
+create_se <- function(input, tinfile, gtf, gene_file, isoform_file,sample.name) {
   library(biomaRt)
   library(GenomicFeatures)
   library(SummarizedExperiment)  
@@ -19,7 +23,7 @@ create_se <- function(input, tinfile, gtf, gene, isoform) {
   data <- data.frame(data[,-1], stringsAsFactors = FALSE, row.names = names)
   data <- data.frame(t(data), stringsAsFactors = FALSE)
   data[,2:ncol(data)] <- sapply(data[,2:ncol(data)], as.numeric)
-  
+  rownames(data)<-sample.name
   #load in tinfile and add to list
   output[["inputfile"]] <- data
   # Get tab-delimited column names from first line of first file 
@@ -94,8 +98,9 @@ create_se <- function(input, tinfile, gtf, gene, isoform) {
     gene = c('ensembl_gene_id','hgnc_symbol','gene_biotype','description','band','external_gene_name','genedb','transcript_count','entrezgene_id'),
     isoform = c('ensembl_transcript_id','ensembl_gene_id','hgnc_symbol','gene_biotype','transcript_biotype','description','band','external_gene_name','genedb','external_transcript_id','transcript_db_name','entrezgene_id')
   )
-  
-  rds.files <- c(gene='DecampBiopsy_Gene_Expression.rds', isoform='DecampBiopsy_Isoform_Expression.rds')
+  gene.file.name<-paste(sample.name,"_Gene_Expression.rds",sep="")
+  isoform.file.name<-paste(sample.name,"_Isoform_Expression.rds",sep="")
+  rds.files <- c(gene=gene.file.name, isoform=isoform.file.name)
   
   # RSEM output columns related to gene/isoform-level annotation
   rsem.annotation.columns <- c(
