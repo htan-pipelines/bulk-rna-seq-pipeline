@@ -4,7 +4,8 @@
 #gene_file= RSEM output
 #isoform_file = RSEM output
 #sample.name = name of sample running through the pipeline (should be same as prefix)
-create_se <- function(input, tinfile, gtf, gene_file, isoform_file,sample.name) {
+#star_file = STAR output file (log file)
+create_se <- function(input, tinfile, gtf, gene_file, isoform_file,sample.name.star_file) {
   library(biomaRt)
   library(GenomicFeatures)
   library(SummarizedExperiment)  
@@ -27,6 +28,9 @@ create_se <- function(input, tinfile, gtf, gene_file, isoform_file,sample.name) 
   rownames(data)<-sample.name
   #load in tinfile and add to list
   output[["inputfile"]] <- data
+  colnames(output[["inputfile"]]) <- paste(
+    "rnaseqc", colnames(output[["inputfile"]],sep="_")
+  )
   # Get tab-delimited column names from first line of first file 
   output[["tinfile"]] <- c(readLines(tinfile, n=1), 
                            sapply(tinfile, scan, what="", n=1, sep="\n", skip=1, quiet=TRUE)) # Read tab-delimited contents of second lines of all files
@@ -38,6 +42,15 @@ create_se <- function(input, tinfile, gtf, gene_file, isoform_file,sample.name) 
   colnames(output[["tinfile"]]) <- gsub(
     "_$", "", gsub("[' \"\\(\\)\\-]", "_", colnames(output[["tinfile"]])))
   
+  star <- read.delim(star_file,header=F,stringsAsFactors = F)
+  star <- read.delim("star.log",header=F,stringsAsFactors = F)
+  #remove unnecessary rows
+  star <- star[-c(1:4,7,22,27,34),]
+  star.names <- star[,1]
+  star <- data.frame(star[,-1], stringsAsFactors = FALSE, row.names = star.names)
+  star <- data.frame(t(star), stringsAsFactors = FALSE)
+  colnames(star)<-c("STAR_total_reads","STAR_avg_input_read_length","STAR_uniquely_mapped","STAR_uniquely_mapped_percent","STAR_avg_mapped_read_length","STAR_num_splices","STAR_num_annotated_splices","STAR_num_GTAG_splices","STAR_num_GCAG_splices","STAR_num_ATAC_splices","STAR_num_noncanonical_splices","STAR_mismatch_rate","STAR_deletion_rate","STAR_deletion_length","STAR_insertion_rate","STAR_insertion_length","STAR_multimapped_multiple","STAR_multimapped_multiple_percent","STAR_multimapped_toomany","STAR_multimapped_toomany_percent","STAR_unmapped_multiple","STAR_unmapped_multiple_percent","STAR_unmapped_tooshort","STAR_unmapped_tooshort_percent","STAR_unmapped_other","STAR_unmapped_other_percent","STAR_chimeric","STAR_chimeric_percent")
+  output[["starfile"]]<-star
   # Initialize with sample name from input file, then add each table in turn
   SE.colData <- data.frame(row.names=rownames(output[["inputfile"]]))
   for (i in seq_along(output)) {
