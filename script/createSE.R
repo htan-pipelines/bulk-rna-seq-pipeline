@@ -5,7 +5,7 @@
 #isoform_file = RSEM output
 #sample.name = name of sample running through the pipeline (should be same as prefix)
 #star_file = STAR output file (log file)
-create_se <- function(input, tinfile, gtf, gene_file, isoform_file,sample.name.star_file) {
+create_se <- function(input, tinfile, gtf, gene_file, isoform_file,sample.name,star_file) {
   library(biomaRt)
   library(GenomicFeatures)
   library(SummarizedExperiment)  
