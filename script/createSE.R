@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-#input = rnaseqc ouptut
+#input = rnaseqc output
 #tinfile = RSEQC_TIN output text file
 #gene_file= RSEM output
 #isoform_file = RSEM output
