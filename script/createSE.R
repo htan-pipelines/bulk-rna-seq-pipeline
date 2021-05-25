@@ -43,7 +43,6 @@ create_se <- function(input, tinfile, gtf, gene_file, isoform_file,sample.name,s
     "_$", "", gsub("[' \"\\(\\)\\-]", "_", colnames(output[["tinfile"]])))
   
   star <- read.delim(star_file,header=F,stringsAsFactors = F)
-  star <- read.delim("star.log",header=F,stringsAsFactors = F)
   #remove unnecessary rows
   star <- star[-c(1:4,7,22,27,34),]
   star.names <- star[,1]
