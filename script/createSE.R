@@ -126,6 +126,7 @@ create_se <- function(input, tinfile, gtf, gene_file, isoform_file,sample.name,s
   # rowRanges of the SummarizedExperiment objects
   txdb <- makeTxDbFromGFF(gtf)
   
+  for (type in c("gene", "isoform")) {
   SE.assays <- list()
   n <- length(rsem.filenames[[type]])
   for (i in seq(n)) {
@@ -158,5 +159,6 @@ create_se <- function(input, tinfile, gtf, gene_file, isoform_file,sample.name,s
       assays=SE.assays, colData=DataFrame(SE.colData), rowRanges=SE.rowRanges
     )
     saveRDS(dataset, rds.files[[type]])
+   }
   }
 }  
