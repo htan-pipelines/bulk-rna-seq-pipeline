@@ -105,7 +105,7 @@ create_se <- function(input, tinfile, gtf, gene_file, isoform_file,sample.name,s
   # Create SummarizedExperiment objects 
   ########################################
   
-  rsem.filenames <- list(gene_file, isoform_file)
+  rsem.filenames <- list(gene=gene_file, isoform=isoform_file)
   
   biomart.attributes <- list(
     gene = c('ensembl_gene_id','hgnc_symbol','gene_biotype','description','band','external_gene_name','genedb','transcript_count','entrezgene_id'),
