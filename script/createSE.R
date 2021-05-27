@@ -29,7 +29,7 @@ create_se <- function(input, tinfile, gtf, gene_file, isoform_file,sample.name,s
   #load in tinfile and add to list
   output[["inputfile"]] <- data
   colnames(output[["inputfile"]]) <- paste(
-    "rnaseqc", colnames(output[["inputfile"]],sep="_")
+    "rnaseqc", colnames(output[["inputfile"]]),sep="_")
   )
   # Get tab-delimited column names from first line of first file 
   output[["tinfile"]] <- c(readLines(tinfile, n=1), 
