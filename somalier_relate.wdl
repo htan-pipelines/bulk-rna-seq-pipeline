@@ -1,12 +1,11 @@
 
 task somalier_relate {
     File somalier_counts
-    File ped_input
     String docker
     Int preemptible_count
 
     command <<<
-          somalier relate --ped ${ped_input} ${somalier_counts}
+          somalier relate ${somalier_counts}
     >>>
 
         output {
