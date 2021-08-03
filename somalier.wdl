@@ -4,7 +4,6 @@ task somalier_extract {
     File ref_fasta
     File input_bam
 
-    String docker
     Int preemptible_count
 
     command <<<
@@ -18,7 +17,7 @@ task somalier_extract {
         runtime {
         disks: "local-disk 1 HDD"
         memory: "2 GB"
-        docker: docker
+        docker: "docker.io/brentp/somalier:latest"
         preemptible: preemptible_count
     }
 workflow somalier_extraction {
