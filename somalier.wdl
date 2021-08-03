@@ -22,6 +22,7 @@ task somalier_extract {
         docker: "docker.io/brentp/somalier:latest"
         preemptible: preemptible_count
     }
+  }
 workflow somalier_extraction {
   call somalier_extract
   }
