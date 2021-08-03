@@ -15,6 +15,7 @@ import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/m
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/VariantFiltration.wdl" as variantfiltration
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/rsem_reference_francois.wdl" as reference_rsem_wdl
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/ReadGroup.wdl" as readgroup_wdl
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/somalier.wdl" as somalier_extract
 
 workflow rnaseq_pipeline_workflow {
 
@@ -56,6 +57,9 @@ workflow rnaseq_pipeline_workflow {
     }     
     call star_wdl.star {
         input: prefix=prefix, outSAMattrRGline = ReadGroup.Read_group_line
+    }
+    call somalier_extract.somalier_extract {
+    	input: prefix=prefix, ref_fasta=refFasta, ref_fasta_index=refFastaIndex, input_bam=star.bam_file, input_bam_index=star.bam_index, preemptible_count=preemptible_count
     }
     call markduplicates_wdl.markduplicates {
         input: input_bam=star.bam_file, prefix=prefix
