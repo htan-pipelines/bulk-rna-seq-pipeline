@@ -9,7 +9,7 @@ task somalier_extract {
     Int preemptible_count
 
     command <<<
-          somalier extract --d `pwd`/ --sites ${known_indel_sites_VCF}  --fasta ${ref_fasta}  ${input_bam}
+          somalier extract --d `pwd`/ --sites ${known_indels_sites_VCF}  --fasta ${ref_fasta}  ${input_bam}
     >>>
 
         output {
