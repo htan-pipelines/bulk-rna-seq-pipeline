@@ -1,6 +1,6 @@
 task somalier_extract {
     String prefix
-    Array[File] known_indels_sites_VCFs
+    File known_indels_sites_VCF
     File ref_fasta
     File input_bam
 
