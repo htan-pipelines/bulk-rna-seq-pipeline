@@ -2,7 +2,9 @@ task somalier_extract {
     String prefix
     File known_indels_sites_VCF
     File ref_fasta
+    File ref_fasta_index
     File input_bam
+    File input_bam_index
 
     Int preemptible_count
 
