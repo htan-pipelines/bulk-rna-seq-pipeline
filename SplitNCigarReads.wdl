@@ -29,7 +29,7 @@ task SplitNCigarReads {
     runtime {
         disks: "local-disk " + sub(((size(input_bam,"GB")+1)*5 + size(ref_fasta,"GB")),"\\..*","") + " HDD"
         docker: docker
-        memory: "8 GB"
+        memory: "16 GB"
         preemptible: preemptible_count
     }
 }
