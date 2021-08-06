@@ -17,7 +17,7 @@ task somalier_extract {
         }
 
         runtime {
-        disks: "local-disk 1 HDD"
+        disks: "local-disk " + sub(((size(input_bam,"GB")+1)*5 + " HDD"
         memory: "2 GB"
         docker: "docker.io/brentp/somalier:latest"
         preemptible: preemptible_count
