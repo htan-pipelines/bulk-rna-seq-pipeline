@@ -15,7 +15,7 @@ task somalier_relate {
 
         runtime {
         disks: "local-disk 10 HDD"
-        memory: "8 GB"
+        memory: "2 GB"
         docker: "docker.io/brentp/somalier:latest"
         preemptible: preemptible_count
     }
