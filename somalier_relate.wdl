@@ -1,7 +1,6 @@
 
 task somalier_relate {
-    File somalier_counts
-    String docker
+    Array[File] somalier_counts
     Int preemptible_count
 
     command <<<
@@ -15,9 +14,9 @@ task somalier_relate {
         }
 
         runtime {
-        disks: "local-disk 1 HDD"
+        disks: "local-disk 10 HDD"
         memory: "8 GB"
-        docker: docker
+        docker: "docker.io/brentp/somalier:latest"
         preemptible: preemptible_count
     }
   }
