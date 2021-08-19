@@ -2,8 +2,7 @@ task MultiQC{
     Array[File] star_files
 
     # runtime values
-
-    String multiqc_docker
+    
     Int machine_mem_mb
     Int cpu = 16
     Int disk
@@ -26,7 +25,7 @@ task MultiQC{
 }
 
   runtime {
-    docker: multiqc_docker
+    docker: "docker.io/ewels/multiqc:latest"
     memory: "${machine_mem_mb} MiB"
     disks: "local-disk ${disk} SSD"
     cpu: cpu
