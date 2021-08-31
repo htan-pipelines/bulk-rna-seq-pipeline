@@ -15,7 +15,7 @@ task createSE {
         R 
         source("/home/analysis/createSE.R")
 
-        create_se(${input_file},${tinfile},${gene},${isoform},${sample_name},${star_log_final}, ${somalier_final})
+        create_se(${sep=',' input_file},${sep=',' tinfile},${sep=',' gene},${sep=',' isoform},${sep='," sample_name},${star_log_final}, ${somalier_final})
     }
 
     output {
