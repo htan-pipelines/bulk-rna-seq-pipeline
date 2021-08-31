@@ -4,7 +4,7 @@ task somalier_relate {
     Int preemptible_count
 
     command <<<
-          somalier relate ${somalier_counts}
+          somalier relate ${sep=' ', somalier_counts}
     >>>
 
         output {
