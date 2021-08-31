@@ -8,7 +8,7 @@ task somalier_final {
        R 
        source("/home/analysis/somalier_final_function.R")
 
-       somalier_stats(${somalier_pairs}, ${sep=',' sample_id}, ${sep=',' particpant_id})
+       somalier_stats(${somalier_pairs}, (${sep=',' sample_id}), (${sep=',' particpant_id}))
    } 
 
    output {
