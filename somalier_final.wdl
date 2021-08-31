@@ -23,6 +23,6 @@ task somalier_final {
     }
 }
 
-workflow somalier_final {
+workflow somalier_final_workflow {
     call somalier_final
 }
