@@ -15,7 +15,7 @@ task MultiQC{
   multiqc_input_tempfile=\$(mktemp)
 
   for filename in \
-    '${star_files.join("' '")}'
+    '${star_files[1].join("' '")}'
   do
     echo "\$filename" >> \$multiqc_input_tempfile
   done
