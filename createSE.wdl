@@ -1,7 +1,7 @@
 task createSE {
 
     Array[File] input_file
-    File tinfile
+    Array[File] tinfile
     File gtf
     Array[File] gene
     Array[File] isoform
