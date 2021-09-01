@@ -1,21 +1,17 @@
 task createSE {
 
-    Array[File] input_file
-    Array[File] tinfile
+    File input_file
+    File tinfile
     File gtf
-    Array[File] gene
-    Array[File] isoform
-    File star_log_final
-    Array[String] sample_name
-    File somalier_final
+    File gene
+    File isoform
+    File star_file
+    String sample_name
     Int disk
 
 
     command {
-        R 
-        source("/home/analysis/createSE.R")
-
-        create_se((${sep=',' input_file}),(${sep=','tinfile}),(${sep=',' gene}),(${sep=',' isoform}),(${sep=',' sample_name}),${star_log_final}, ${somalier_final})
+        Rscript /home/analysis/createSE.R ${input} ${tinfile} ${gtf} ${gene_file} ${isoform_file} ${sample.name} ${star_file} 
     }
 
     output {
