@@ -3,15 +3,15 @@ task createSE {
     File input_file
     File tinfile
     File gtf
-    File gene
-    File isoform
+    File gene_file
+    File isoform_file
     File star_file
     String sample_name
     Int disk
 
 
     command {
-        Rscript /home/analysis/createSE.R ${input} ${tinfile} ${gtf} ${gene_file} ${isoform_file} ${sample.name} ${star_file} 
+        Rscript /home/analysis/createSE.R ${input_file} ${tinfile} ${gtf} ${gene_file} ${isoform_file} ${sample_name} ${star_file} 
     }
 
     output {
