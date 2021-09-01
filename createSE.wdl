@@ -11,7 +11,9 @@ task createSE {
 
 
     command {
-        Rscript /home/analysis/createSE.R ${input_file} ${tinfile} ${gtf} ${gene_file} ${isoform_file} ${sample_name} ${star_file} 
+        gene=gunzip${gene_file}
+        isoform=gunzip ${isoform_file}        
+        Rscript /home/analysis/createSE.R ${input_file} ${tinfile} ${gtf} $gene $isoform ${sample_name} ${star_file} 
     }
 
     output {
