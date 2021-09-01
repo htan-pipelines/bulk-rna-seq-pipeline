@@ -6,6 +6,8 @@ task somalier_final {
 
    command {
        echo ${sep=',' sample_id}
+       samples=${sep=' ' sample_id}
+       echo samples
        
        Rscript /home/analysis/somalier_final_function.R --no-save --args ${somalier_pairs} ${sep=',' sample_id} ${sep=',' particpant_id}  
    } 
