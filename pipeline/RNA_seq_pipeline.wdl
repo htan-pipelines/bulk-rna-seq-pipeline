@@ -15,6 +15,7 @@ import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/m
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/rsem_reference_francois.wdl" as reference_rsem_wdl
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/ReadGroup.wdl" as readgroup_wdl
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/somalier.wdl" as somalier_extract
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/createSE.wdl" as createse
 
 workflow rnaseq_pipeline_workflow {
 
@@ -194,6 +195,16 @@ workflow rnaseq_pipeline_workflow {
             preemptible_count = preemptible_count,
             docker = gatk4_docker,
             gatk_path = gatk_path
+    }
+    call createse.createSE{
+    	input: 
+		sample_name = prefix,
+        	input_file = rnaseqc2.metrics,
+		tinfile = RSEQC_TIN.TIN_summary,
+            	gtf = annotationsGTF,
+            	gene_file = rsem.genes,
+        	isoform_file = rsem.isoforms,
+            	star_file = star.log
     }
   }
   
