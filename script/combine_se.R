@@ -8,7 +8,7 @@ gene_se<-args[3]
 gene_se<-strsplit(gene_se, split=',')
 gene_se<-unlist(gene_se, use.names = FALSE)
 
-for i in gene_se {
+for (i in gene_se) {
     file<-readRDS(i)
     temp<-c(temp, file)
 }
