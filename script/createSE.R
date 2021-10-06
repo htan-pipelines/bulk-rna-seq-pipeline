@@ -4,7 +4,11 @@
 #gene_file= RSEM output
 #isoform_file = RSEM output
 #sample.name = name of sample running through the pipeline (should be same as prefix)
-#star_file = STAR output file (log file) Rscript /home/analysis/createSE.R R.metrics.tsv tin.txt gtf.gtf R.rsem.genes.results R.rsem.isoforms.results "PCGA-01-0021-025-20687-01310BX-1031643R" R.Log.final.out
+#star_file = STAR output file (log file) 
+#/Library/Frameworks/R.framework/Resources/bin/
+#Rscript createSE.R PCGA-01-0021-025-20687-01310BX-1031643R.metrics.tsv  PCGA-01-0021-025-20687-01310BX-1031643R.Aligned.sortedByCoord.out.summary.txt gencode.v34.annotation.gtf PCGA-01-0021-025-20687-01310BX-1031643R.rsem.genes.results PCGA-01-0021-025-20687-01310BX-1031643R.rsem.isoforms.results "PCGA-01-0021-025-20687-01310BX-1031643R" PCGA-01-0021-025-20687-01310BX-1031643R.Log.final.out
+
+#PCGA-01-0021-025-20687-01310BX-1031643R
 create_se <- function(input_file, tinfile, gtf, gene_file, isoform_file, sample_name, star_file) {
   library(biomaRt)
   library(GenomicFeatures)
@@ -87,31 +91,28 @@ create_se <- function(input_file, tinfile, gtf, gene_file, isoform_file, sample_
   # Create a TxDb object from the GTF file; this will be used to populate the
   # rowRanges of the SummarizedExperiment objects
   txdb <- makeTxDbFromGFF(gtf)
+  
+  ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl")
 
   for (type in c("gene", "isoform")) {
   SE.assays <- list()
   n <- length(rsem.filenames[[type]])
   for (i in seq(n)) {
-    cat("Processing", type, "level RSEM output file", i, "of", n, "\r")
+    print(paste("Processing", type, "level RSEM output file", i, "of", n))
     rsem.output <- read.wsv(
       rsem.filenames[[type]][i], row.names=rsem.id.columns[type]
     )
     # Copy each RSEM column (minus any annotation columns) into assay list
     for (j in setdiff(colnames(rsem.output), rsem.annotation.columns)) {
-      SE.assays[[j]] <- cbind(SE.assays[[j]], rsem.output[[j]])
+      SE.assays[[j]] <- as.matrix(rsem.output[[j]])
     }
     
-    cat("\n")
     # Name the rows and columns of each matrix
     SE.assays <- lapply(SE.assays, `rownames<-`, rownames(rsem.output))
     SE.assays <- lapply(SE.assays, `colnames<-`, rownames(SE.colData))
     
-    if (type == "gene"){
-      BM <- read.delim("/home/analysis/BM_gene.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
-    }
-    else{
-      BM <- read.delim("/home/analysis/BM_iso.txt", header=TRUE, stringsAsFactors=FALSE, sep="\t")
-    }
+    BM <- getBM(attributes=biomart.attributes[[type]],  mart = ensembl)
+      
     # Collapse by first column (either gene or transcript ID)
     BM <- aggregate(BM[-1], BM[1], unique)
     # Reorder to match order of features from RSEM output
