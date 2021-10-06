@@ -19,7 +19,7 @@ saveRDS(temp, paste0(prefix, "_Gene_Expression.rds"))
 
 iso_se<-args[4]
 iso_se<-strsplit(iso_se, split=',')
-iso_se<-unlist(gene_se, use.names = FALSE)
+iso_se<-unlist(iso_se, use.names = FALSE)
 
 for j in iso_se {
     file<-readRDS(j)
