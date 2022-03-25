@@ -6,13 +6,16 @@ task createSE {
     File gene_file
     File isoform_file
     File star_file
+    File fastqc_1_file 
+    File fastqc_2_file 
+    File samtools_stats_file
     String sample_name
     Int disk
 
 
     command {
              
-        Rscript /home/analysis/createSE.R ${input_file} ${tinfile} ${gtf} ${gene_file} ${isoform_file} ${sample_name} ${star_file} 
+        Rscript /home/analysis/create_SE.R ${input_file} ${tinfile} ${gtf} ${gene_file} ${isoform_file} ${sample_name} ${star_file} ${fastqc_1_file} ${fastqc_2_file} ${samtools_stats_file}
     }
 
     output {
