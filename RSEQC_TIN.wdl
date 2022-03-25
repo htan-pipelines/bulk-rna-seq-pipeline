@@ -2,6 +2,7 @@ task RSEQC_TIN {
     File bam_input
     File bam_index
     File gene_bed
+    String base_name
 
     # runtime values
 
@@ -19,6 +20,7 @@ task RSEQC_TIN {
      set -euo pipefail
      
      tin.py -i ${bam_input} -r ${gene_bed}
+     samtools stats ${bam_input} > "${base_name}_stats.txt"
      }
 
   runtime {
@@ -31,6 +33,7 @@ task RSEQC_TIN {
   }
   output {
    File TIN_summary = glob("*.summary.txt")[0]
+   File samtools_stats_file = "${base_name}_stats.txt"
   }
 }
 workflow RSEQC_TIN_workflow{
