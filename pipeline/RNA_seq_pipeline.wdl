@@ -1,8 +1,8 @@
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/FASTQC.wdl" as fastqc
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/RSEQC_TIN.wdl" as rseqc_TIN
-import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:star_v1-0_BETA/versions/8/plain-WDL/descriptor" as star_wdl
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/star_francois.wdl" as star_wdl
 import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:markduplicates_v1-0_BETA/versions/6/plain-WDL/descriptor" as markduplicates_wdl
-import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:rsem_v1-0_BETA/versions/6/plain-WDL/descriptor" as rsem_wdl
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/rsem_francois.wdl" as rsem_wdl
 import "https://api.firecloud.org/ga4gh/v1/tools/broadinstitute_gtex:rnaseqc2_v1-0_BETA/versions/3/plain-WDL/descriptor" as rnaseqc_wdl
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/gtfToCallingIntervals.wdl" as gtftocallingintervals_wdl
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/SplitNCigarReads.wdl" as splitncigar
@@ -30,6 +30,7 @@ workflow rnaseq_pipeline_workflow {
     String platform_unit
     String platform_model
     File gene_bed
+    File rseqc_gene_bed
     String? gatk4_docker_override
     String gatk4_docker = select_first([gatk4_docker_override, "broadinstitute/gatk:latest"])
     String? gatk_path_override
@@ -65,7 +66,7 @@ workflow rnaseq_pipeline_workflow {
         input: input_bam=star.bam_file, prefix=prefix
     }
     call rseqc_TIN.RSEQC_TIN {
-        input: bam_input = star.bam_file, gene_bed = gene_bed, bam_index = star.bam_index
+        input: bam_input = star.bam_file, gene_bed = rseqc_gene_bed, bam_index = star.bam_index, base_name = prefix
     }
     
     call rsem_reference {
@@ -87,19 +88,19 @@ workflow rnaseq_pipeline_workflow {
             gatk_path = gatk_path,
             docker = gatk4_docker
     }
-   call DupMark {
-	    input:
-		input_bam = star.bam_file,
-		base_name = prefix + ".dedupped",
-		preemptible_count = preemptible_count,
-		docker = gatk4_docker,
-		gatk_path = gatk_path
-	}
+   #call DupMark {
+#	    input:
+#		input_bam = star.bam_file,
+#		base_name = prefix + ".dedupped",
+#		preemptible_count = preemptible_count,
+#		docker = gatk4_docker,
+#		gatk_path = gatk_path
+#	}
     
   call splitncigar.SplitNCigarReads {
         input:
-            input_bam = DupMark.output_bam,
-            input_bam_index = DupMark.output_bam_index,
+            input_bam = markduplicates.bam_file, 
+            input_bam_index = markduplicates.bam_index,
             base_name = prefix + ".split",
             ref_fasta = refFasta,
             ref_fasta_index = refFastaIndex,
@@ -198,13 +199,16 @@ workflow rnaseq_pipeline_workflow {
     }
     call createse.createSE{
     	input: 
-		sample_name = prefix,
+        	sample_name = prefix,
         	input_file = rnaseqc2.metrics,
-		tinfile = RSEQC_TIN.TIN_summary,
-            	gtf = annotationsGTF,
-            	gene_file = rsem.genes,
+			tinfile = RSEQC_TIN.TIN_summary,
+            gtf = annotationsGTF,
+            gene_file = rsem.genes,
         	isoform_file = rsem.isoforms,
-            	star_file = star.log
+            star_file = star.log,
+            fastqc_1_file = FASTQC.fastqc_1_zip,
+    		fastqc_2_file = FASTQC.fastqc_2_zip,
+    		samtools_stats_file = RSEQC_TIN.samtools_stats_file
     }
   }
   
@@ -271,7 +275,7 @@ task DupMark {
 	runtime {
 		disks: "local-disk " + sub(((size(input_bam,"GB")+1)*3),"\\..*","") + " HDD"
 		docker: docker
-		memory: "4 GB"
+		memory: "8 GB"
 		preemptible: preemptible_count
 	}
 }
