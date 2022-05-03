@@ -4,7 +4,7 @@ task somalier_relate {
     Int preemptible_count
 
     command <<<
-          somalier relate ${sep=' ' somalier_counts}
+          somalier relate --min-ab 0.2 ${sep=' ' somalier_counts} 
     >>>
 
         output {
