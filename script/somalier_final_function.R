@@ -2,6 +2,8 @@
 #' summary statistics of relatedness, number of related samples, heterozygostiy mean per sample, relatedness above two thresholds (0.8 and 0.6) 
 #' written by William Mischler 
 #' updated by Yohana Kefella
+if (!require('tidyverse')) install.packages('tidyverse'); library('tidyverse')
+if (!require('dplyr')) install.packages('dplyr'); library('dplyr')
 
 somalier_stats <- function(somalier_file, sample_id, participant_id) {
   #read in somalier file
@@ -34,7 +36,7 @@ somalier_stats <- function(somalier_file, sample_id, participant_id) {
         ix1 <- somalier.pairs$sample_a_id == participant_id[i] & somalier.pairs$sample_b_id == participant_id[i]
         su_ <- summary(somalier.pairs$relatedness[ix1])
         tmp <- somalier.pairs
-        tmp <- tmp %>% mutate(sample_value_rel = paste("(",X.sample_a, sample_b, relatedness,")", sep = " "))
+        tmp <- tmp %>% dplyr::mutate(sample_value_rel = paste("(",X.sample_a, sample_b, relatedness,")", sep = " "))
         tmp$heterozygosity_rate <- round(tmp$hets_a/(tmp$hets_a + tmp$hom_alts_a), 3)
         su_het <- summary(tmp$heterozygosity_rate[ix1])
         par_out[i,1:4]<- round(su_[c(4,3,6,1)], 4)
@@ -43,13 +45,13 @@ somalier_stats <- function(somalier_file, sample_id, participant_id) {
         mj = which(ix1 == T)[1]
         #filter relatedness greater than 0.8 threshold 
         if (tmp$relatedness[mj]>0.8){
-          x <- tmp %>% filter(relatedness > 0.8 & X.sample_a == tmp$X.sample_a[mj]) %>% select(sample_b, relatedness)
+          x <- tmp %>% dplyr::filter(relatedness > 0.8 & X.sample_a == tmp$X.sample_a[mj]) %>% dplyr::select(sample_b, relatedness)
           par_out[i, 12]<- paste(c(x[,1]), collapse = ", ")
           par_out[i,13] <- paste0(x[,2], collapse=", ")
         }
         #filter relatedness greater than 0.6 threshold 
         if (tmp$relatedness[mj]>0.6){
-          x <- tmp %>% filter(relatedness > 0.6 & X.sample_a == tmp$X.sample_a[mj]) %>% select(sample_b, relatedness)
+          x <- tmp %>% dplyr::filter(relatedness > 0.6 & X.sample_a == tmp$X.sample_a[mj]) %>% dplyr::select(sample_b, relatedness)
           par_out[i, 14]<- paste(c(x[,1]), collapse = ", ")
           par_out[i,15] <- paste0(x[,2], collapse=", ")
         }
