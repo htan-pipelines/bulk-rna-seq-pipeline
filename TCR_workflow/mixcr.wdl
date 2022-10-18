@@ -1,4 +1,5 @@
 task MiXCR {
+    File mi_license 
     File fastq1
     File fastq2
     String docker
@@ -8,6 +9,7 @@ task MiXCR {
     String prefix
 
     command <<<
+        mixcr activate-license < ${mi_license}
         mixcr analyze shotgun --starting-material ${material} -s ${species} --only-productive ${fastq1} ${fastq2} ${prefix}
     >>>
         output {
