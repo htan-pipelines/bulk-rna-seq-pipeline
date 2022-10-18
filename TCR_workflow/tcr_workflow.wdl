@@ -9,7 +9,7 @@ task MiXCR {
     String prefix
 
     command <<<
-        mixcr activate-license ${mi_license}
+        mixcr activate-license < ${mi_license}
         mixcr analyze shotgun --starting-material ${material} -s ${species} --only-productive ${fastq1} ${fastq2} ${prefix}
     >>>
         output {
