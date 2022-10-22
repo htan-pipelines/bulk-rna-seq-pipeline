@@ -34,10 +34,10 @@ task FASTQC {
    
 
    output{
-    File fastqc_1_html=glob("*_R1_*_fastqc.html")[0]
-    File fastqc_1_zip=glob("*_R1_*_fastqc.zip")[0]
-    File fastqc_2_html=glob("*_R2_*_fastqc.html")[0]
-    File fastqc_2_zip=glob("*_R2_*_fastqc.zip")[0]
+    File fastqc_1_html=glob("*R1*_fastqc.html")[0]
+    File fastqc_1_zip=glob("*R1*_fastqc.zip")[0]
+    File fastqc_2_html=glob("*R2*_fastqc.html")[0]
+    File fastqc_2_zip=glob("*R2*_fastqc.zip")[0]
   }
 }
 
