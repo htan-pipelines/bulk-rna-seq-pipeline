@@ -30,7 +30,10 @@ somalier_stats <- function(somalier_file, sample_id, participant_id) {
         
         su <- summary(somalier.pairs$relatedness[ix])
         par_out[i,5:8]<- round(su[c(4,3,6,1)], 4)
-        temp<-somalier.pairs[ix,]
+        tmp<-somalier.pairs
+        tmp$heterozygosity_rate <- round(tmp$hets_a/(tmp$hets_a + tmp$hom_alts_a), 3)
+        su_het <- summary(tmp$heterozygosity_rate[ix])
+        par_out[i,9] <- round(su_het[4], 4)
       }
       if (somalier.pairs$sample_a_id[j] == participant_id[i] & somalier.pairs$sample_b_id[j] == participant_id[i]) {
         ix1 <- somalier.pairs$sample_a_id == participant_id[i] & somalier.pairs$sample_b_id == participant_id[i]
