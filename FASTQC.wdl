@@ -36,10 +36,10 @@ task FASTQC {
    
 
    output{
-    File fastqc_1_html=${fwdfastq}_fastqc.html
-    File fastqc_1_zip=${fwdfastq}_fastqc.zip
-    File fastqc_2_html=${revfastq}_fastqc.html
-    File fastqc_2_zip=${revfastq}_fastqc.zip
+    File fastqc_1_html="${fwdfastq}_fastqc.html"
+    File fastqc_1_zip="${fwdfastq}_fastqc.zip"
+    File fastqc_2_html="${revfastq}_fastqc.html"
+    File fastqc_2_zip="${revfastq}_fastqc.zip"
   }
 }
 
