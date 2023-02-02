@@ -3,6 +3,8 @@
 task FASTQC {
     File fastq1
     File? fastq2
+    String fwdfastq = sub(basename(fastq1),".f.*q.*$","")
+    String revfastq = sub(basename(fastq2),".f.*q.*$","")
     String prefix
     # runtime values
 
@@ -34,10 +36,10 @@ task FASTQC {
    
 
    output{
-    File fastqc_1_html=glob("*R1*_fastqc.html")[0]
-    File fastqc_1_zip=glob("*R1*_fastqc.zip")[0]
-    File fastqc_2_html=glob("*R2*_fastqc.html")[0]
-    File fastqc_2_zip=glob("*R2*_fastqc.zip")[0]
+    File fastqc_1_html=${fwdfastq}_fastqc.html[0]
+    File fastqc_1_zip=${fwdfastq}_fastqc.zip[0]
+    File fastqc_2_html=${revfastq}_fastqc.html[0]
+    File fastqc_2_zip=${revfastq}_fastqc.zip[0]
   }
 }
 
