@@ -3,8 +3,8 @@
 task FASTQC {
     File fastq1
     File? fastq2
-    String fwdName = sub(basename(fastq1),".f.*q.*$","")
-    String revName = sub(basename(fastq2),".f.*q.*$","")
+    String fwdfastq = sub(basename(fastq1),".f.*q.*$","")
+    String revfastq = sub(basename(fastq2),".f.*q.*$","")
     String prefix
     # runtime values
 
