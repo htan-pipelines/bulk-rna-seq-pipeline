@@ -6,13 +6,14 @@
 #sample.name = name of sample running through the pipeline (should be same as prefix)
 #star_file = STAR output file (log file) 
 #/Library/Frameworks/R.framework/Resources/bin/
-#Rscript createSE.R PCGA-01-0021-025-20687-01310BX-1031643R.metrics.tsv  PCGA-01-0021-025-20687-01310BX-1031643R.Aligned.sortedByCoord.out.summary.txt gencode.v34.annotation.gtf PCGA-01-0021-025-20687-01310BX-1031643R.rsem.genes.results PCGA-01-0021-025-20687-01310BX-1031643R.rsem.isoforms.results "PCGA-01-0021-025-20687-01310BX-1031643R" PCGA-01-0021-025-20687-01310BX-1031643R.Log.final.out
+#Rscript createSE.R PCGA-01-0021-025-20687-01310BX-1031643R.metrics.tsv  PCGA-01-0021-025-20687-01310BX-1031643R.Aligned.sortedByCoord.out.summary.txt gencode.v34.annotation.gtf PCGA-01-0021-025-20687-01310BX-1031643R.rsem.genes.results PCGA-01-0021-025-20687-01310BX-1031643R.rsem.isoforms.results "PCGA-01-0021-025-20687-01310BX-1031643R" PCGA-01-0021-025-20687-01310BX-1031643R.Log.final.out MS-RW-R-1_S8_R1_001_fastqc.zip MS-RW-R-1_S8_R1_001_fastqc.zip PCGA02_10044_2001586_stats.txt
 
-#PCGA-01-0021-025-20687-01310BX-1031643R
-create_se <- function(input_file, tinfile, gtf, gene_file, isoform_file, sample_name, star_file) {
+create_se <- function(input_file, tinfile, gtf, gene_file, isoform_file, sample_name, star_file, fastqc_1_file,fastqc_2_file, samtools_stats_file) {
   library(biomaRt)
   library(GenomicFeatures)
-  library(SummarizedExperiment)  
+  library(SummarizedExperiment) 
+  library(tidyr)
+  library(ngsReports)
   
   read.wsv <- function (file, ...) {
     read.table(
@@ -21,19 +22,47 @@ create_se <- function(input_file, tinfile, gtf, gene_file, isoform_file, sample_
       )
   }
 
+  fdl_1 <- FastqcDataList(fastqc_1_file)
+  fdl_2 <- FastqcDataList(fastqc_2_file)
+  
   output <- list()
+ 
+  #load fastq statistics
+  fqcs <- getModule(fdl_1[[1]], "Summary")
+  output[["fastqc_R1"]] <- t(fqcs)['Status',]
+  names(output[['fastqc_R1']]) <- paste("fastqc_R1",gsub(" ", "_", fqcs$Category),sep = "_")
+  output[["fastqc_R1"]]['fastqc_R1_Total_Reads']<- readTotals(fdl_1)$Total_Sequences
+  output[["fastqc_R1"]] <-data.frame(as.list(output[['fastqc_R1']]))
+  
+  fqcs <- getModule(fdl_2[[1]], "Summary")
+  output[["fastqc_R2"]] <- t(fqcs)['Status',]
+  names(output[['fastqc_R2']]) <- paste("fastqc_R2",gsub(" ", "_", fqcs$Category),sep = "_")
+  output[["fastqc_R2"]]['fastqc_R2_Total_Reads']<- readTotals(fdl_2)$Total_Sequences
+  output[["fastqc_R2"]] <-data.frame(as.list(output[['fastqc_R2']]))
+  
+  #load samtools stats
+  data <- readLines(samtools_stats_file)
+  sn <- grep("^SN",data, value=TRUE)
+  sn <- separate(data.frame(sn),col=1, into=c("ID", "Name","Value"), sep="\t")[,-1]
+  sn$Name <- gsub(":", "", sn$Name)
+  
+  output[['samtools_stats']] <- t(sn)['Value',]
+  names(output[['samtools_stats']]) <- paste("samtools",gsub(" ", "_", sn$Name),sep = "_")
+  output[["samtools_stats"]] <-data.frame(as.list(output[['samtools_stats']]))
+  
+  
   #load input file
   data <- read.delim(input_file, header=FALSE, stringsAsFactors=FALSE)
-  print(dim(data))
-  print(rownames(data))
+  #print(dim(data))
+  #print(rownames(data))
   #organize data into proper format
   names <- data[,1]
   data <- data.frame(data[,-1], stringsAsFactors = FALSE, row.names = names)
   data <- data.frame(t(data), stringsAsFactors = FALSE)
   data[,2:ncol(data)] <- sapply(data[,2:ncol(data)], as.numeric)
   rownames(data)<-sample_name
-  print(dim(data))
-  print(rownames(data))
+  #print(dim(data))
+  #print(rownames(data))
   #load in tinfile and add to list
   output[["inputfile"]] <- data
   colnames(output[["inputfile"]]) <- paste(
@@ -46,27 +75,28 @@ create_se <- function(input_file, tinfile, gtf, gene_file, isoform_file, sample_
   output[["tinfile"]] <- read.wsv(
     textConnection(output[["tinfile"]]), row.names=1
   )
-  print(output[["tinfile"]])
+  #print(output[["tinfile"]])
   # Add a prefix to the column names
   colnames(output[["tinfile"]]) <- gsub(
     "_$", "", gsub("[' \"\\(\\)\\-]", "_", colnames(output[["tinfile"]])))
   
   star <- read.delim(star_file,header=F,stringsAsFactors = F)
-  print(star)
+  #print(star)
   #remove unnecessary rows
   star <- star[-c(1:4,7,22,27,34),]
   star.names <- star[,1]
   star <- data.frame(star[,-1], stringsAsFactors = FALSE, row.names = star.names)
   star <- data.frame(t(star), stringsAsFactors = FALSE)
   colnames(star)<-c("STAR_total_reads","STAR_avg_input_read_length","STAR_uniquely_mapped","STAR_uniquely_mapped_percent","STAR_avg_mapped_read_length","STAR_num_splices","STAR_num_annotated_splices","STAR_num_GTAG_splices","STAR_num_GCAG_splices","STAR_num_ATAC_splices","STAR_num_noncanonical_splices","STAR_mismatch_rate","STAR_deletion_rate","STAR_deletion_length","STAR_insertion_rate","STAR_insertion_length","STAR_multimapped_multiple","STAR_multimapped_multiple_percent","STAR_multimapped_toomany","STAR_multimapped_toomany_percent","STAR_unmapped_multiple","STAR_unmapped_multiple_percent","STAR_unmapped_tooshort","STAR_unmapped_tooshort_percent","STAR_unmapped_other","STAR_unmapped_other_percent","STAR_chimeric","STAR_chimeric_percent")
-  print(star)
+  #print(star)
   output[["starfile"]]<-star
+  #print(output)
   #Initialize with sample name from input file, then add each table in turn
   SE.colData <- data.frame(row.names=rownames(output[["inputfile"]]))
   for (i in seq_along(output)) {
     SE.colData <- cbind(SE.colData, output[[i]])
   }
-  row.names(SE.colData) <- SE.colData[1,1]
+  print(rownames(SE.colData))
 
   # Create SummarizedExperiment objects 
   ########################################
@@ -91,8 +121,8 @@ create_se <- function(input_file, tinfile, gtf, gene_file, isoform_file, sample_
   # Create a TxDb object from the GTF file; this will be used to populate the
   # rowRanges of the SummarizedExperiment objects
   txdb <- makeTxDbFromGFF(gtf)
-  
-  ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl")
+  # listEnsemblArchives() Ensembl 108 Oct 2022 https://oct2022.archive.ensembl.org current version/release 108 
+  ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", version = "108")
 
   for (type in c("gene", "isoform")) {
   SE.assays <- list()
@@ -125,11 +155,10 @@ create_se <- function(input_file, tinfile, gtf, gene_file, isoform_file, sample_
     dataset <- SummarizedExperiment(
       assays=SE.assays, colData=DataFrame(SE.colData), rowRanges=SE.rowRanges
     )
-
+    print(rownames(dataset@colData))
     saveRDS(dataset, rds.files[[type]])
    }
   }
 }  
 args <- commandArgs(trailingOnly = TRUE)
-create_se(args[1], args[2], args[3], args[4], args[5], args[6], args[7])
-
+create_se(args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10])
