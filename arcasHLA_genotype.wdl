@@ -16,6 +16,7 @@ task arcasHLA_extract {
 	}
 
 	runtime {
+    	disks: "local-disk " + sub(((size(input_bam,"GB")+1)*5),"\\..*","") + " HDD"
 		docker:docker
 		memory: "${memory}GB"
 		cpu: "${num_threads}"
