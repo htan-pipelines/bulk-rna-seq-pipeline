@@ -20,7 +20,7 @@ task BaseRecalibrator {
 
     command <<<
         ${gatk_path} --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -XX:+PrintFlagsFinal \
-            -Xlog:gc::utctime -XX:+PrintGCDateStamps -XX:+PrintGCDetails \
+            -Xlog:gc::utctime -Xlog:gc* \
             -Xloggc:gc_log.log -Xms4000m" \
             BaseRecalibrator \
             -R ${ref_fasta} \
