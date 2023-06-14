@@ -16,8 +16,8 @@ task ApplyBQSR {
 
     command <<<
         ${gatk_path} \
-            --java-options "-XX:+PrintFlagsFinal -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps \
-            -XX:+PrintGCDetails -Xloggc:gc_log.log \
+            --java-options "-XX:+PrintFlagsFinal -Xlog:gc::utctime \
+            -Xlog:gc* -Xloggc:gc_log.log \
             -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Xms3000m" \
             ApplyBQSR \
             --add-output-sam-program-record \
