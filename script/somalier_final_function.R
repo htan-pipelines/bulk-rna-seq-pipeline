@@ -27,19 +27,23 @@ somalier_stats <- function(somalier_file, sample_id, participant_id) {
     tmp<-somalier.pairs
     tmp <- tmp %>% mutate(sample_value_rel = paste("(",X.sample_a, sample_b, relatedness,")", sep = " "),
                           heterozygosity_rate = round(hets_a/(hets_a + hom_alts_a),digits = 3))
-    ix <- somalier.pairs$sample_a_id == participant_id[i] & somalier.pairs$sample_b_id != participant_id[i] |
-      somalier.pairs$sample_a_id != participant_id[i] & somalier.pairs$sample_b_id == participant_id[i]
-    su <- summary(somalier.pairs$relatedness[ix])
-    par_out[i,5:8]<- round(su[c(4,3,6,1)], 4)
-    par_out[i,9] <- paste(round(mean(unique(c(tmp$heterozygosity_rate[ix & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
-                    tmp$heterozygosity_rate[ix & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])),collapse = ","),digits = 3))
-    for (m in 1:nrow(tmp)) {
-      if (tmp$relatedness[m] > 0.5 & !is.na(tmp$relatedness[m])){
-        par_out[i,13] <- paste(unique(c(tmp$sample_value_rel[ix & tmp$relatedness > 0.5 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
-                                        tmp$sample_value_rel[ix & tmp$relatedness > 0.5 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])), collapse = ",")
-        
-        par_out[i,14] <- paste(unique(c(tmp$X.sample_a[ix & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
-                                        tmp$sample_b[ix & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])), collapse = ",")
+    par_out[i,9] <- Reduce(data.frame, tmp %>% filter(X.sample_a == sample_id[i] | sample_b == sample_id[i]) %>% select(heterozygosity_rate) %>% summarise(round(mean(heterozygosity_rate),digits = 3))) 
+    for ( inx in 1:nrow(somalier.pairs)){
+      if(somalier.pairs$sample_a_id[inx] == participant_id[i] & somalier.pairs$sample_b_id[inx] != participant_id[i] |
+         somalier.pairs$sample_a_id[inx] != participant_id[i] & somalier.pairs$sample_b_id[inx] == participant_id[i]){
+        ix <- somalier.pairs$sample_a_id == participant_id[i] & somalier.pairs$sample_b_id != participant_id[i] |
+          somalier.pairs$sample_a_id != participant_id[i] & somalier.pairs$sample_b_id == participant_id[i]
+        su <- summary(somalier.pairs$relatedness[ix])
+        par_out[i,5:8]<- round(su[c(4,3,6,1)], 4)
+        for (m in 1:nrow(tmp)) {
+          if (tmp$relatedness[m] > 0.5 & !is.na(tmp$relatedness[m])){
+            par_out[i,13] <- paste(unique(c(tmp$sample_value_rel[ix & tmp$relatedness > 0.5 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
+                                            tmp$sample_value_rel[ix & tmp$relatedness > 0.5 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])), collapse = ",")
+            break
+          }
+        }
+        par_out[i,14] <- paste(unique(c(tmp$X.sample_a[ix & tmp$relatedness > 0.8 &  !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
+                                        tmp$sample_b[ix & tmp$relatedness > 0.8 &  !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])), collapse = ",")
         
         par_out[i,15]<- paste(unique(c(tmp$relatedness[ix & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
                                        tmp$relatedness[ix & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])),collapse = ",")
@@ -58,51 +62,61 @@ somalier_stats <- function(somalier_file, sample_id, participant_id) {
         break
       }
     }
+    
     for ( j in 1:nrow(somalier.pairs)){
       if ( somalier.pairs$sample_a_id[j] == participant_id[i] & somalier.pairs$sample_b_id[j] == participant_id[i]){
         iy <- somalier.pairs$sample_a_id == participant_id[i] & somalier.pairs$sample_b_id == participant_id[i] 
         su_ <- summary(somalier.pairs$relatedness[iy])
         par_out[i,1:4]<- round(su_[c(4,3,6,1)], 4)
-        par_out[i,9] <- paste(round(mean(unique(c(tmp$heterozygosity_rate[iy & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
-                                       tmp$heterozygosity_rate[iy & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])),collapse = ","),digits = 3))
-        
+
         par_out[i,10:11]<-c(length(unique(c(tmp$sample_b[iy], tmp$X.sample_a[iy]))),
                             paste(unique(c(tmp$sample_b[iy & tmp$sample_b != sample_id[i]], tmp$X.sample_a[iy & tmp$X.sample_a != sample_id[i]])), collapse = ","))
         
-        par_out[i,12] <- paste(unique(c(tmp$sample_value_rel[iy & tmp$relatedness < 0.5 & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
-                                        tmp$sample_value_rel[iy & tmp$relatedness < 0.5 & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])), collapse = ",")
-        
+        par_out[i,12] <- paste(unique(c(tmp$sample_value_rel[iy & tmp$relatedness < 0.5 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
+                                        tmp$sample_value_rel[iy & tmp$relatedness < 0.5 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])), collapse = ",")
+
         par_out[i,14]<-paste(unique(c(tmp$X.sample_a[iy & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
-                                      tmp$sample_b[iy & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])), collapse = ",")
+                                      tmp$sample_b[iy & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])),
+                             unique(c(tmp$X.sample_a[ix & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
+                                      tmp$sample_b[ix & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])), collapse = ",")
         
-        par_out[i,15]<- paste(unique(c(tmp$relatedness[iy & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
-                                       tmp$relatedness[iy & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])), collapse = ",")
+        par_out[i,15]<- paste(c(unique(c(tmp$relatedness[iy & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
+                                         tmp$relatedness[iy & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])),
+                                unique(c(tmp$relatedness[ix & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
+                                         tmp$relatedness[ix & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]]))), collapse = ",")
         
-        par_out[i,16] <- paste(unique(c(tmp$sample_value_rel[iy & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
-                                        tmp$sample_value_rel[iy & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])), collapse = ",")
+        par_out[i,16] <- paste(c(unique(c(tmp$sample_value_rel[iy & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
+                                          tmp$sample_value_rel[iy & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])),
+                                 unique(c(tmp$sample_value_rel[ix & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
+                                          tmp$sample_value_rel[ix & tmp$relatedness > 0.8 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]]))), collapse = ",")
         
-        par_out[i,17]<-paste(unique(c(tmp$X.sample_a[iy & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
-                                      tmp$sample_b[iy & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])), collapse = ",")
+        par_out[i,17]<-paste(c(unique(c(tmp$X.sample_a[iy & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
+                                        tmp$sample_b[iy & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])),
+                               unique(c(tmp$X.sample_a[ix & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
+                                        tmp$sample_b[ix & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]]))), collapse = ",")
         
-        par_out[i,18]<- paste(unique(c(tmp$relatedness[iy & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
-                                       tmp$relatedness[iy & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])), collapse = ",")
+        par_out[i,18]<- paste(c(unique(c(tmp$relatedness[iy & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
+                                         tmp$relatedness[iy & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])),
+                                unique(c(tmp$relatedness[ix & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
+                                         tmp$relatedness[ix & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]]))), collapse = ",")
         
-        par_out[i,19] <- paste(unique(c(tmp$sample_value_rel[iy & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
-                                        tmp$sample_value_rel[iy & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])), collapse = ",")
-        
+        par_out[i,19] <- paste(c(unique(c(tmp$sample_value_rel[iy & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
+                                          tmp$sample_value_rel[iy & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]])),
+                                 unique(c(tmp$sample_value_rel[ix & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b == sample_id[i] & tmp$X.sample_a != sample_id[i]],
+                                          tmp$sample_value_rel[ix & tmp$relatedness > 0.6 & !is.na(tmp$relatedness) & tmp$sample_b != sample_id[i] & tmp$X.sample_a == sample_id[i]]))), collapse = ",")
         break
       }
     }
   }
   
-    rownames(par_out)<-sample_id
-    colnames(par_out)<-c("somalier_relatedness_mean", "somalier_relatedness_median", "somalier_relatedness_max", "somalier_relatedness_min", "somalier_other_relatedness_mean", 
-                         "somalier_other_relatedness_median", "somalier_other_relatedness_max", "somalier_other_relatedness_min", "somalier_heterozygosity_mean", 
-                         "somalier_relatedness_num_samples", "matching_relatedness_with_sample_byAnnotation", "unrelated_flag_with_sample_byAnnotation","related_flag_with_sample_byNon-annotation",
-                         "matching_relatedness_with_samples_byThreshold (> 0.8%)", "relatedness_value_with_samples_byThreshold (> 0.8%)", "matching_relatedness_value_byThreshold (> 0.8%)",
-                         "matching_relatedness_with_samples_byThreshold (> 0.6%)","relatedness_value_with_samples_byThreshold (> 0.6%)", "matching_relatedenss_value_byThreshold (> 0.6%)")
-    
-    write.table(par_out, "somalier.final.tsv", quote = F, sep="\t")
+  rownames(par_out)<-sample_id
+  colnames(par_out)<-c("somalier_relatedness_mean", "somalier_relatedness_median", "somalier_relatedness_max", "somalier_relatedness_min", "somalier_other_relatedness_mean", 
+                       "somalier_other_relatedness_median", "somalier_other_relatedness_max", "somalier_other_relatedness_min", "somalier_heterozygosity_mean", 
+                       "somalier_relatedness_num_samples", "matching_relatedness_with_sample_byAnnotation", "unrelated_flag_with_sample_byAnnotation","related_flag_with_sample_byNon-annotation",
+                       "matching_relatedness_with_samples_byThreshold (> 0.8%)", "relatedness_value_with_samples_byThreshold (> 0.8%)", "matching_relatedness_value_byThreshold (> 0.8%)",
+                       "matching_relatedness_with_samples_byThreshold (> 0.6%)","relatedness_value_with_samples_byThreshold (> 0.6%)", "matching_relatedenss_value_byThreshold (> 0.6%)")
+  
+  write.table(par_out, "somalier.final.tsv", quote = F, sep="\t")
 }
 
 
