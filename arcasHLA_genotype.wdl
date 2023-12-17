@@ -63,7 +63,7 @@ workflow arcasHLAWorkflow {
 
 	call arcasHLA_extract {
 		input:
-			prefix=prefix
+			prefix=prefix,
 			input_bam=input_bam
 
 	}
