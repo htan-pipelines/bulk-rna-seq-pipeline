@@ -14,7 +14,7 @@ task MiXCR {
     >>>
         output {
         File report = "${prefix}.report"
-        File ALL = "${prefix}.clonotypes.all.txt"
+        File ALL = "${prefix}.clonotypes.ALL.txt"
         File clns = "${prefix}.clns"
         File vdjca = "${prefix}.vdjca"
         }
@@ -36,7 +36,7 @@ task TRUST {
     Int preemptible_count
 
     command <<<
-          /home/TRUST4/run-trust4 -b ${input_bam} -f ${ref_fasta} --ref ${ref_fasta_IMGT} -o ${prefix}
+          /opt2/TRUST4/run-trust4 -b ${input_bam} -f ${ref_fasta} --ref ${ref_fasta_IMGT} -o ${prefix}
 
     >>>
 
@@ -44,6 +44,8 @@ task TRUST {
         File out_cdr3="${prefix}_cdr3.out"
         File trustfinal="${prefix}_final.out"
         File trustreport="${prefix}_report.tsv"
+        File trustraw="${prefix}_raw.out"
+        File trustannot="${prefix}_annot.fa"
         }
 
         runtime {
@@ -66,4 +68,3 @@ workflow tcr_workflow {
         input: prefix=prefix
     }
 }
-
