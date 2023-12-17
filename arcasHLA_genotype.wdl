@@ -3,8 +3,8 @@ task arcasHLA_extract {
 	File input_bam
 	Int memory
 	Int num_threads
-    String docker
-    Int preemptible_count
+	String docker
+	Int preemptible_count
 
 	command <<<
 		arcasHLA extract ${input_bam} --verbose --threads ${num_threads} --outdir .
@@ -32,8 +32,8 @@ task arcasHLA_genotype {
 	String prefix
 	Int memory
 	Int num_threads
-    String docker
-    Int preemptible_count
+	String docker
+	Int preemptible_count
 
 	command <<<
 		arcasHLA genotype --verbose --threads ${num_threads} \
