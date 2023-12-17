@@ -11,8 +11,8 @@ task arcasHLA_extract {
 	>>>	
 
 	output {
-		File sample_extracted_1 = "${prefix}.Aligned.sortedByCoord.out.extracted.1.fq.gz"
-		File sample_extracted_2 = "${prefix}.Aligned.sortedByCoord.out.extracted.2.fq.gz"
+		File sample_extracted_1 = "${prefix}.extracted.1.fq.gz"
+		File sample_extracted_2 = "${prefix}.extracted.2.fq.gz"
 	}
 
 	runtime {
@@ -63,6 +63,7 @@ workflow arcasHLAWorkflow {
 	call arcasHLA_extract {
 		input:
 			prefix=prefix
+			input_bam=input_bam
 			
 	}
 
