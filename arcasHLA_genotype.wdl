@@ -60,16 +60,10 @@ task arcasHLA_genotype {
 workflow arcasHLAWorkflow {
     String prefix
 
-	call arcasHLA_extract {
-		input:
-			prefix=prefix
-			input_bam=input_bam
-			
-	}
+	call arcasHLA_extract
 
 	call arcasHLA_genotype {
 		input:
-        	prefix=prefix,
 			sample_extracted_1 = arcasHLA_extract.sample_extracted_1,
 			sample_extracted_2 = arcasHLA_extract.sample_extracted_2
 	}
