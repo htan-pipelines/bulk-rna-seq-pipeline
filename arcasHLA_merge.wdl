@@ -6,9 +6,9 @@ task arcasHLA_merge {
     Int preemptible_count
     
 	command {
-    	mkdir genotype_out
-        mv ${sep=' ' sample_genotype} genotype_out/
-        echo "$PWD"
+		mkdir genotype_out
+		mv ${sep=' ' sample_genotype} genotype_out/
+		echo "$PWD"
 		arcasHLA merge --indir genotype_out  --verbose --outdir .
 	}
 
@@ -20,7 +20,7 @@ task arcasHLA_merge {
 		docker:docker
 		memory: "${memory}GB"
 		cpu: "${num_threads}"
-        preemptible_count:preemptible_count
+		preemptible_count:preemptible_count
 
 	}
 
