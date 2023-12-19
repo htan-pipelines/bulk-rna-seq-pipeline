@@ -2,8 +2,8 @@ task arcasHLA_merge {
 	Array[File] sample_genotype
 	Int memory
 	Int num_threads
-    String docker
-    Int preemptible_count
+	String docker
+	Int preemptible_count
     
 	command {
 		mkdir genotype_out
