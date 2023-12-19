@@ -26,6 +26,6 @@ task arcasHLA_merge {
 
 }
 
-workflow arcasHLA_merge_workflow {
+workflow arcasHLA_mergeWorkflow {
 	call arcasHLA_merge
 }
