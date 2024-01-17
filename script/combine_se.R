@@ -35,18 +35,22 @@ args <- commandArgs(trailingOnly = TRUE)
 #load in arguments
 prefix<-args[1]
 somalier_final<-read.delim(args[2],header=T,stringsAsFactors = F)
-gene_se<-args[3]
+genotypes<-read.delim(args[3],header=T,stringsAsFactors = F)
+gene_se<-args[4]
 gene_se<-strsplit(gene_se, split=',')
 gene_se<-unlist(gene_se, use.names = FALSE)
 temp <- cbind_overall(gene_se)
 `temp`@colData@listData[["Somalier"]]<-somalier_final
+`temp`@colData@listData[["Genotypes"]]<-genotypes
+
 
 saveRDS(temp, paste0(prefix, "_Gene_Expression.rds"))
 
-iso_se<-args[4]
+iso_se<-args[5]
 iso_se<-strsplit(iso_se, split=',')
 iso_se<-unlist(iso_se, use.names = FALSE)
 temp2 <- cbind_overall(iso_se)
 `temp2`@colData@listData[["Somalier"]]<-somalier_final
+`temp2`@colData@listData[["Genotypes"]]<-genotypes
 
 saveRDS(temp2, paste0(prefix, "_Isoform_Expression.rds"))
