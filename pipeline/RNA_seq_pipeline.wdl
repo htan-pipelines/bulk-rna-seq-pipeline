@@ -15,6 +15,8 @@ import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/m
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/rsem_reference_francois.wdl" as reference_rsem_wdl
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/ReadGroup.wdl" as readgroup_wdl
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/somalier.wdl" as somalier_extract
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/arcasHLA_genotype.wdl" as arcasHLA_extract
+import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/TCR_workflow/tcr_workflow.wdl" as tcr_wdl
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/createSE.wdl" as createse
 
 workflow rnaseq_pipeline_workflow {
@@ -35,6 +37,7 @@ workflow rnaseq_pipeline_workflow {
     String gatk4_docker = select_first([gatk4_docker_override, "broadinstitute/gatk:latest"])
     String? gatk_path_override
     String gatk_path = select_first([gatk_path_override, "/gatk/gatk"])
+
    
     Array[File] knownVcfs
     Array[File] knownVcfsIndices
@@ -60,7 +63,19 @@ workflow rnaseq_pipeline_workflow {
         input: prefix=prefix, outSAMattrRGline = ReadGroup.Read_group_line
     }
     call somalier_extract.somalier_extract {
-    	input: prefix=prefix, ref_fasta=refFasta, ref_fasta_index=refFastaIndex, input_bam=star.bam_file, input_bam_index=star.bam_index, preemptible_count=preemptible_count
+        input: prefix=prefix, ref_fasta=refFasta, ref_fasta_index=refFastaIndex, input_bam=star.bam_file, input_bam_index=star.bam_index, preemptible_count=preemptible_count
+    }
+    call arcasHLA_extract.arcasHLA_extract {
+        input: prefix=prefix, input_bam=star.bam_file, preemptible_count=preemptible_count
+    }
+    call arcasHLA_extract.arcasHLA_genotype {
+        input: prefix=prefix, sample_extracted_1=arcasHLA_extract.sample_extracted_1, sample_extracted_2=arcasHLA_extract.sample_extracted_2, preemptible_count=preemptible_count
+    }
+    call tcr_wdl.TRUST{
+        input: prefix=prefix, input_bam=star.bam_file, preemptible_count=preemptible_count
+    }
+    call tcr_wdl.MiXCR{
+        input: prefix=prefix, preemptible_count=preemptible_count
     }
     call markduplicates_wdl.markduplicates {
         input: input_bam=star.bam_file, prefix=prefix
@@ -89,13 +104,13 @@ workflow rnaseq_pipeline_workflow {
             docker = gatk4_docker
     }
    #call DupMark {
-#	    input:
-#		input_bam = star.bam_file,
-#		base_name = prefix + ".dedupped",
-#		preemptible_count = preemptible_count,
-#		docker = gatk4_docker,
-#		gatk_path = gatk_path
-#	}
+#       input:
+#       input_bam = star.bam_file,
+#       base_name = prefix + ".dedupped",
+#       preemptible_count = preemptible_count,
+#       docker = gatk4_docker,
+#       gatk_path = gatk_path
+#   }
     
   call splitncigar.SplitNCigarReads {
         input:
@@ -198,17 +213,17 @@ workflow rnaseq_pipeline_workflow {
             gatk_path = gatk_path
     }
     call createse.createSE{
-    	input: 
-        	sample_name = prefix,
-        	input_file = rnaseqc2.metrics,
-			tinfile = RSEQC_TIN.TIN_summary,
+        input: 
+            sample_name = prefix,
+            input_file = rnaseqc2.metrics,
+            tinfile = RSEQC_TIN.TIN_summary,
             gtf = annotationsGTF,
             gene_file = rsem.genes,
-        	isoform_file = rsem.isoforms,
+            isoform_file = rsem.isoforms,
             star_file = star.log,
             fastqc_1_file = FASTQC.fastqc_1_zip,
-    		fastqc_2_file = FASTQC.fastqc_2_zip,
-    		samtools_stats_file = RSEQC_TIN.samtools_stats_file
+            fastqc_2_file = FASTQC.fastqc_2_zip,
+            samtools_stats_file = RSEQC_TIN.samtools_stats_file
     }
   }
   
@@ -248,34 +263,34 @@ workflow rnaseq_pipeline_workflow {
 
 task DupMark {
 
- 	File input_bam
- 	String base_name
+    File input_bam
+    String base_name
 
   String gatk_path
 
   String docker
- 	Int preemptible_count
+    Int preemptible_count
 
- 	command <<<
- 	    ${gatk_path} \
- 	        MarkDuplicates \
- 	        --INPUT ${input_bam} \
- 	        --OUTPUT ${base_name}.bam  \
- 	        --CREATE_INDEX true \
- 	        --VALIDATION_STRINGENCY SILENT \
- 	        --METRICS_FILE ${base_name}.metrics
- 	>>>
+    command <<<
+        ${gatk_path} \
+            MarkDuplicates \
+            --INPUT ${input_bam} \
+            --OUTPUT ${base_name}.bam  \
+            --CREATE_INDEX true \
+            --VALIDATION_STRINGENCY SILENT \
+            --METRICS_FILE ${base_name}.metrics
+    >>>
 
- 	output {
- 		File output_bam = "${base_name}.bam"
- 		File output_bam_index = "${base_name}.bai"
- 		File metrics_file = "${base_name}.metrics"
- 	}
+    output {
+        File output_bam = "${base_name}.bam"
+        File output_bam_index = "${base_name}.bai"
+        File metrics_file = "${base_name}.metrics"
+    }
 
-	runtime {
-		disks: "local-disk " + sub(((size(input_bam,"GB")+1)*3),"\\..*","") + " HDD"
-		docker: docker
-		memory: "8 GB"
-		preemptible: preemptible_count
-	}
+    runtime {
+        disks: "local-disk " + sub(((size(input_bam,"GB")+1)*3),"\\..*","") + " HDD"
+        docker: docker
+        memory: "8 GB"
+        preemptible: preemptible_count
+    }
 }
