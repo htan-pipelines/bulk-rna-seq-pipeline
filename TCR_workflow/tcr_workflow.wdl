@@ -7,6 +7,8 @@ task MiXCR {
     String material
     Int preemptible_count
     String prefix
+    Int memory
+    Int disk_space
 
     command <<<
         mixcr activate-license < ${mi_license}
@@ -20,8 +22,8 @@ task MiXCR {
         }
 
         runtime {
-        disks: "local-disk 64 HDD"
-        memory: "32 GB"
+        memory: "${memory}GB"
+        disks: "local-disk ${disk_space} HDD"
         docker: docker
         preemptible: preemptible_count
         }
@@ -49,8 +51,8 @@ task TRUST {
         }
 
         runtime {
-        disks: "local-disk 64 HDD"
-        memory: "8 GB"
+        memory: "${memory}GB"
+        disks: "local-disk ${disk_space} HDD"
         docker: docker
         preemptible: preemptible_count
     }
