@@ -7,6 +7,7 @@
 #star_file = STAR output file (log file) 
 #/Library/Frameworks/R.framework/Resources/bin/
 #Rscript createSE.R PCGA-01-0021-025-20687-01310BX-1031643R.metrics.tsv  PCGA-01-0021-025-20687-01310BX-1031643R.Aligned.sortedByCoord.out.summary.txt gencode.v34.annotation.gtf PCGA-01-0021-025-20687-01310BX-1031643R.rsem.genes.results PCGA-01-0021-025-20687-01310BX-1031643R.rsem.isoforms.results "PCGA-01-0021-025-20687-01310BX-1031643R" PCGA-01-0021-025-20687-01310BX-1031643R.Log.final.out MS-RW-R-1_S8_R1_001_fastqc.zip MS-RW-R-1_S8_R1_001_fastqc.zip PCGA02_10044_2001586_stats.txt
+httr::set_config(config(ssl_verifypeer = FALSE, ssl_verifyhost = FALSE)) # # Disables SSL verification
 
 create_se <- function(input_file, tinfile, gtf, gene_file, isoform_file, sample_name, star_file, fastqc_1_file,fastqc_2_file, samtools_stats_file) {
   library(biomaRt)
