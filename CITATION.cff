@@ -1,0 +1,25 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: htan-pipelines/bulk-rna-seq-pipeline
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Chris
+    family-names: Husted
+    email: chusted@bu.edu
+  - given-names: 'William '
+    family-names: Mischler
+  - family-names: 'Venkatraman '
+    given-names: Divya
+    email: dvenkat@bu.edu
+  - given-names: Yohana
+    family-names: Kefella
+    email: ykefella@bu.edu
+url: 'https://github.com/htan-pipelines/bulk-rna-seq-pipeline'
+abstract: Bulk RNA-seq pipeline based on the GTEx RNA-seq pipeline.
+version: '20'
+date-released: '2024-01-17'
