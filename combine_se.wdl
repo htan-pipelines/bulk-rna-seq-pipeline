@@ -1,11 +1,11 @@
 task write_json {
-    input {
-        Array[File] iso_se
-        Array[File] gene_se
-        File somalier_final_output
-        File genotype_tsv
-        String prefix
-    }
+
+    Array[File] iso_se
+    Array[File] gene_se
+    File somalier_final_output
+    File genotype_tsv
+    String prefix
+
 
     command <<<
         echo '{"iso_se": ["'$(echo ${sep='","' iso_se})'"], 
@@ -26,11 +26,11 @@ task write_json {
 }
 
 task combine_se {
-    input {
-        File json_file
-        String prefix
-        Int disk
-    }
+
+    File json_file
+    String prefix
+    Int disk
+    
 
     command {
         Rscript /home/analysis/combine_se.R ${json_file}
@@ -50,14 +50,14 @@ task combine_se {
 }
 
 workflow combine_se_workflow {
-    input {
-        Array[File] iso_se
-        Array[File] gene_se
-        File somalier_final_output
-        File genotype_tsv
-        String prefix
-        Int disk
-    }
+
+    Array[File] iso_se
+    Array[File] gene_se
+    File somalier_final_output
+    File genotype_tsv
+    String prefix
+    Int disk
+    
 
     call write_json {
         input:
