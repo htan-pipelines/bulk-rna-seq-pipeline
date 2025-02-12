@@ -48,18 +48,9 @@ task combine_se {
 
 workflow combine_se_workflow {
 
-    Array[File] iso_se
-    Array[File] gene_se
-    File somalier_final_output
-    File genotype_tsv
-    String prefix
-    Int disk
 
     call write_json {
-        input:
-            iso_se = iso_se,
-            gene_se = gene_se,
-            prefix = prefix
+
     }
 
     call combine_se {
