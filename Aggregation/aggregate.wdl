@@ -4,11 +4,11 @@ import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/m
 import "https://raw.githubusercontent.com/htan-pipelines/bulk-rna-seq-pipeline/master/combine_se.wdl" as combine_se
 
 workflow aggregation_workflow {
-    
+
     Array[String] sample_id
+    Int preemptible_count
     Array[File] iso_se
     Array[File] gene_se
-    Int preemptible_count
     String prefix
     Int disk
 
@@ -16,18 +16,24 @@ workflow aggregation_workflow {
     }
 
     call somalier_final.somalier_final {
-        input: somalier_pairs=somalier_relate.somalier_pairs, sample_id=sample_id
+        input: somalier_pairs = somalier_relate.somalier_pairs, sample_id = sample_id
     }
 
     call arcasHLA_merge.arcasHLA_merge {
     }
 
-    call combine_se.combine_se {
-        input: 
-            somalier_final_output = somalier_final.somalier_final_output,
-            genotype_tsv = arcasHLA_merge.genotype_tsv,
+    call combine_se.write_json {
+        input:
             iso_se = iso_se,
             gene_se = gene_se,
+            somalier_final_output = somalier_final.somalier_final_output,
+            genotype_tsv = arcasHLA_merge.genotype_tsv,
+            prefix = prefix
+    }
+
+    call combine_se.combine_se {
+        input:
+            json_file = write_json.json_file,
             prefix = prefix,
             disk = disk
     }
