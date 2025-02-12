@@ -2,15 +2,11 @@ task write_json {
 
     Array[File] iso_se
     Array[File] gene_se
-    File somalier_final_output
-    File genotype_tsv
     String prefix
 
     command <<<
         echo '{"iso_se": ["'$(echo ${sep='","' iso_se})'"], 
                "gene_se": ["'$(echo ${sep='","' gene_se})'"], 
-               "somalier_final_output": "'${somalier_final_output}'", 
-               "genotype_tsv": "'${genotype_tsv}'",
                "prefix": "'${prefix}'"}' > ${prefix}_input.json
     >>>
 
@@ -28,11 +24,13 @@ task write_json {
 task combine_se {
 
     File json_file
+    File somalier_final_output
+    File genotype_tsv
     String prefix
     Int disk
 
     command {
-        Rscript /home/analysis/combine_se.R ${json_file}
+        Rscript /home/analysis/combine_se.R ${json_file} ${somalier_final_output} ${genotype_tsv}
     }
 
     output {
@@ -61,14 +59,14 @@ workflow combine_se_workflow {
         input:
             iso_se = iso_se,
             gene_se = gene_se,
-            somalier_final_output = somalier_final_output,
-            genotype_tsv = genotype_tsv,
             prefix = prefix
     }
 
     call combine_se {
         input:
             json_file = write_json.json_file,
+            somalier_final_output = somalier_final_output,
+            genotype_tsv = genotype_tsv,
             prefix = prefix,
             disk = disk
     }
