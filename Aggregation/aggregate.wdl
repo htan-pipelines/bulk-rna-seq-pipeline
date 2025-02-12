@@ -26,14 +26,14 @@ workflow aggregation_workflow {
         input:
             iso_se = iso_se,
             gene_se = gene_se,
-            somalier_final_output = somalier_final.somalier_final_output,
-            genotype_tsv = arcasHLA_merge.genotype_tsv,
             prefix = prefix
     }
 
     call combine_se.combine_se {
         input:
             json_file = write_json.json_file,
+            somalier_final_output = somalier_final.somalier_final_output,
+            genotype_tsv = arcasHLA_merge.genotype_tsv,
             prefix = prefix,
             disk = disk
     }
