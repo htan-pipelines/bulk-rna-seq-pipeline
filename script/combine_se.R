@@ -46,12 +46,23 @@ input_data <- fromJSON(json_file)
 # Extract values from JSON
 prefix <- input_data$prefix
 
+# Convert comma-separated strings to lists if necessary
+parse_file_list <- function(file_list) {
+  if (is.character(file_list) && grepl(",", file_list)) {
+    return(strsplit(file_list, ",")[[1]])
+  }
+  return(file_list)
+}
+
+# Ensure gene_se and iso_se are correctly parsed as lists
+gene_se <- parse_file_list(input_data$gene_se)
+iso_se <- parse_file_list(input_data$iso_se)
+
 # Load Somalier and genotype data separately
 somalier_final <- read.delim(somalier_final_file, header = TRUE, stringsAsFactors = FALSE)
 genotypes <- read.delim(genotype_tsv_file, header = TRUE, stringsAsFactors = FALSE)
 
 # Process Gene Expression SE files
-gene_se <- input_data$gene_se
 gene_combined <- cbind_overall(gene_se)
 gene_combined@colData@listData[["Somalier"]] <- somalier_final
 gene_combined@colData@listData[["Genotypes"]] <- genotypes
@@ -60,7 +71,6 @@ gene_combined@colData@listData[["Genotypes"]] <- genotypes
 saveRDS(gene_combined, paste0(prefix, "_Gene_Expression.rds"))
 
 # Process Isoform Expression SE files
-iso_se <- input_data$iso_se
 iso_combined <- cbind_overall(iso_se)
 iso_combined@colData@listData[["Somalier"]] <- somalier_final
 iso_combined@colData@listData[["Genotypes"]] <- genotypes
