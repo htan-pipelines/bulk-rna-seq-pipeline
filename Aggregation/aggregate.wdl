@@ -20,10 +20,7 @@ workflow aggregation_workflow {
     }
 
     call combine_se.write_json {
-        input:
-            iso_se = iso_se,
-            gene_se = gene_se,
-            prefix = prefix
+
     }
 
     call combine_se.combine_se {
