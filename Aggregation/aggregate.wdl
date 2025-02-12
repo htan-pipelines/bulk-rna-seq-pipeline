@@ -9,6 +9,8 @@ workflow aggregation_workflow {
     Int preemptible_count
     Array[File] iso_se
     Array[File] gene_se
+    File somalier_final_output
+    File genotype_tsv
     String prefix
     Int disk
 
@@ -32,8 +34,8 @@ workflow aggregation_workflow {
     call combine_se.combine_se {
         input:
             json_file = write_json.json_file,
-            somalier_final_output = somalier_final.somalier_final_output,
-            genotype_tsv = arcasHLA_merge.genotype_tsv,
+            somalier_final_output = somalier_final.somalier_final_output,  # Added this
+            genotype_tsv = arcasHLA_merge.genotype_tsv,  # Added this
             prefix = prefix,
             disk = disk
     }
