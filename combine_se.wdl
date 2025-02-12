@@ -6,12 +6,12 @@ task write_json {
     File genotype_tsv
     String prefix
 
-
     command <<<
         echo '{"iso_se": ["'$(echo ${sep='","' iso_se})'"], 
                "gene_se": ["'$(echo ${sep='","' gene_se})'"], 
                "somalier_final_output": "'${somalier_final_output}'", 
-               "genotype_tsv": "'${genotype_tsv}'"}' > ${prefix}_input.json
+               "genotype_tsv": "'${genotype_tsv}'",
+               "prefix": "'${prefix}'"}' > ${prefix}_input.json
     >>>
 
     output {
@@ -30,7 +30,6 @@ task combine_se {
     File json_file
     String prefix
     Int disk
-    
 
     command {
         Rscript /home/analysis/combine_se.R ${json_file}
@@ -57,7 +56,6 @@ workflow combine_se_workflow {
     File genotype_tsv
     String prefix
     Int disk
-    
 
     call write_json {
         input:
