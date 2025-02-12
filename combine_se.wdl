@@ -50,7 +50,10 @@ workflow combine_se_workflow {
 
 
     call write_json {
-
+        input:
+            iso_se = iso_se,
+            gene_se = gene_se,
+            prefix = prefix
     }
 
     call combine_se {
