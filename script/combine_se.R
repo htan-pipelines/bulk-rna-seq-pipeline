@@ -2,8 +2,8 @@ library(SummarizedExperiment)
 library(jsonlite)
 
 #' Function to combine SummarizedExperiment (SE) RDS files. 
-#' cbind_se combines rds files with matching data (rowData of each rds file)
-#' cbind_se_alternate combines rds files after it matches data (rowData of each rds file)
+#' cbind_se combines RDS files with matching data (rowData of each RDS file)
+#' cbind_se_alternate combines RDS files after matching data (rowData of each RDS file)
 
 cbind_overall <- function(gene_list) {
   cbind_se <- function(gene_list) {
@@ -36,15 +36,19 @@ cbind_overall <- function(gene_list) {
 
 # Read arguments
 args <- commandArgs(trailingOnly = TRUE)
-json_file <- args[1]  # JSON file containing inputs
+json_file <- args[1]  # JSON file containing iso_se, gene_se, and prefix
+somalier_final_file <- args[2]  # Separate argument for Somalier final output
+genotype_tsv_file <- args[3]    # Separate argument for genotype TSV
 
 # Load JSON
 input_data <- fromJSON(json_file)
 
 # Extract values from JSON
 prefix <- input_data$prefix
-somalier_final <- read.delim(input_data$somalier_final_output, header = TRUE, stringsAsFactors = FALSE)
-genotypes <- read.delim(input_data$genotype_tsv, header = TRUE, stringsAsFactors = FALSE)
+
+# Load Somalier and genotype data separately
+somalier_final <- read.delim(somalier_final_file, header = TRUE, stringsAsFactors = FALSE)
+genotypes <- read.delim(genotype_tsv_file, header = TRUE, stringsAsFactors = FALSE)
 
 # Process Gene Expression SE files
 gene_se <- input_data$gene_se
