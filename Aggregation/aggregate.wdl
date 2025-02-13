@@ -7,7 +7,7 @@ workflow aggregation_workflow {
 
     Array[String] sample_id
     Int preemptible_count
-
+    
 
     call somalier_relate.somalier_relate {
     }
@@ -19,14 +19,9 @@ workflow aggregation_workflow {
     call arcasHLA_merge.arcasHLA_merge {
     }
 
-    call combine_se.write_json {
-
-    }
-
-    call combine_se.combine_se {
+    call combine_se.combine_se_write_json {
         input:
-            json_file = write_json.json_file,
-            somalier_final_output = somalier_final.somalier_final_output,  # Added this
-            genotype_tsv = arcasHLA_merge.genotype_tsv,  # Added this
+            somalier_final_output = somalier_final.somalier_final_output,
+            genotype_tsv = arcasHLA_merge.genotype_tsv,
     }
 }
