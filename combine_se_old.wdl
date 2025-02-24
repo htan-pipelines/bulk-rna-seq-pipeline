@@ -16,7 +16,7 @@ task combine_se {
     runtime {
         disks: "local-disk ${disk} SSD"
         memory: "16 GB"
-        docker: "docker.io/htanpipelines/aggregation:latest"
+        docker: "docker.io/htanpipelines/aggregation:old_ver"
         preemptible: 0
     }
 }
