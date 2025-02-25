@@ -1,37 +1,63 @@
 library(SummarizedExperiment)
 library(jsonlite)
 
-#' Function to combine SummarizedExperiment (SE) RDS files. 
-#' cbind_se combines RDS files with matching data (rowData of each RDS file)
-#' cbind_se_alternate combines RDS files after matching data (rowData of each RDS file)
+##' Function to combine SummarizedExperiment (SE) RDS files. 
+#' Combines RDS files by keeping shared metadata (colData) and retains only common gene features (rowData)
 
-cbind_overall <- function(gene_list) {
-  cbind_se <- function(gene_list) {
-    temp <- readRDS(gene_list[1])
-    for (i in gene_list[-1]) {
-      file <- readRDS(i)
-      temp <- SummarizedExperiment::cbind(temp, file)
+aggregate_SE_objects <- function(se_list) {
+  # Read first SE object as a template
+  se_merged <- readRDS(se_list[1])
+  
+  for (se_file in se_list[-1]) {
+    se_new <- readRDS(se_file)
+    
+    # Ensure rowData consistency (keep only shared features)
+    common_features <- intersect(rownames(se_merged), rownames(se_new))
+    if (length(common_features) == 0) {
+      stop("No matching gene features found across SE objects. Cannot merge.")
     }
-    return(temp)
-  }
-
-  cbind_se_alternate <- function(gene_list) {
-    temp <- readRDS(gene_list[1])
-    for (i in gene_list[-1]) {
-      file <- readRDS(i)
-      rowData(file) <- rowData(temp)
-      temp <- SummarizedExperiment::cbind(temp, file)
+    
+    se_merged <- se_merged[common_features, , drop = FALSE]
+    se_new <- se_new[common_features, , drop = FALSE]
+    
+    # Standardize rowData columns
+    common_metadata_cols <- intersect(colnames(rowData(se_merged)), colnames(rowData(se_new)))
+    rowData(se_merged) <- rowData(se_merged)[, common_metadata_cols, drop = FALSE]
+    rowData(se_new) <- rowData(se_new)[, common_metadata_cols, drop = FALSE]
+    
+    # Merge multiple assays (expected_count, TPM, FPKM)
+    assay_list <- c("expected_count", "TPM", "FPKM")
+    merged_assays <- list()
+    
+    for (assay_name in assay_list) {
+      if (assay_name %in% names(assays(se_merged)) && assay_name %in% names(assays(se_new))) {
+        merged_assays[[assay_name]] <- SummarizedExperiment::cbind(assay(se_merged, assay_name), 
+                                                                   assay(se_new, assay_name))
+      }
     }
-    return(temp)
-  }
-
-  if (inherits(try(cbind_se(gene_list)), "try-error")) {
-    output <- cbind_se_alternate(gene_list)
-  } else {
-    output <- cbind_se(gene_list)
+    
+    # Standardize colData columns
+    common_colData_cols <- intersect(colnames(colData(se_merged)), colnames(colData(se_new)))
+    if (length(common_colData_cols) == 0) {
+      stop("No common colData columns found across SE objects. Cannot merge.")
+    }
+    
+    # Ensure both colData have the same structure
+    colData(se_merged) <- colData(se_merged)[, common_colData_cols, drop = FALSE]
+    colData(se_new) <- colData(se_new)[, common_colData_cols, drop = FALSE]
+    
+    # Merge colData (sample metadata)
+    merged_colData <- rbind(colData(se_merged), colData(se_new))
+    
+    # Create new SE object with multiple assays
+    se_merged <- SummarizedExperiment(
+      assays = merged_assays,
+      rowData = rowData(se_merged),
+      colData = merged_colData
+    )
   }
   
-  return(output)
+  return(se_merged)
 }
 
 # Read arguments
@@ -63,7 +89,7 @@ somalier_final <- read.delim(somalier_final_file, header = TRUE, stringsAsFactor
 genotypes <- read.delim(genotype_tsv_file, header = TRUE, stringsAsFactors = FALSE)
 
 # Process Gene Expression SE files
-gene_combined <- cbind_overall(gene_se)
+gene_combined <- aggregate_SE_objects(gene_se)
 gene_combined@colData@listData[["Somalier"]] <- somalier_final
 gene_combined@colData@listData[["Genotypes"]] <- genotypes
 
@@ -71,7 +97,7 @@ gene_combined@colData@listData[["Genotypes"]] <- genotypes
 saveRDS(gene_combined, paste0(prefix, "_Gene_Expression.rds"))
 
 # Process Isoform Expression SE files
-iso_combined <- cbind_overall(iso_se)
+iso_combined <- aggregate_SE_objects(iso_se)
 iso_combined@colData@listData[["Somalier"]] <- somalier_final
 iso_combined@colData@listData[["Genotypes"]] <- genotypes
 
