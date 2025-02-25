@@ -90,8 +90,21 @@ genotypes <- read.delim(genotype_tsv_file, header = TRUE, stringsAsFactors = FAL
 
 # Process Gene Expression SE files
 gene_combined <- aggregate_SE_objects(gene_se)
+
+# Ensure genotypes match colnames of gene_combined
+matching_samples <- intersect(colnames(gene_combined), rownames(genotypes))
+if (length(matching_samples) == 0) {
+  stop("No matching sample names found between genotypes and gene_combined. Cannot merge.")
+}
+
+# Subset genotypes to match the colnames of gene_combined
+genotypes_filtered <- genotypes[matching_samples, , drop = FALSE]
+
+# Reorder genotypes to match gene_combined column order
+genotypes_filtered <- genotypes_filtered[colnames(gene_combined), , drop = FALSE]
+
 gene_combined@colData@listData[["Somalier"]] <- somalier_final
-gene_combined@colData@listData[["Genotypes"]] <- genotypes
+gene_combined@colData@listData[["Genotypes"]] <- genotypes_filtered
 
 # Save Gene Expression output
 saveRDS(gene_combined, paste0(prefix, "_Gene_Expression.rds"))
@@ -99,7 +112,7 @@ saveRDS(gene_combined, paste0(prefix, "_Gene_Expression.rds"))
 # Process Isoform Expression SE files
 iso_combined <- aggregate_SE_objects(iso_se)
 iso_combined@colData@listData[["Somalier"]] <- somalier_final
-iso_combined@colData@listData[["Genotypes"]] <- genotypes
+iso_combined@colData@listData[["Genotypes"]] <- genotypes_filtered
 
 # Save Isoform Expression output
 saveRDS(iso_combined, paste0(prefix, "_Isoform_Expression.rds"))
