@@ -87,6 +87,7 @@ iso_se <- parse_file_list(input_data$iso_se)
 # Load Somalier and genotype data separately
 somalier_final <- read.delim(somalier_final_file, header = TRUE, stringsAsFactors = FALSE)
 genotypes <- read.delim(genotype_tsv_file, header = TRUE, stringsAsFactors = FALSE)
+rownames(genotypes) <- genotypes$subject
 
 # Process Gene Expression SE files
 gene_combined <- aggregate_SE_objects(gene_se)
