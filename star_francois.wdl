@@ -32,6 +32,9 @@ task star {
     Int? chimMainSegmentMultNmax
     Int? chimOutJunctionFormat
     File? sjdbFileChrStartEnd
+    String? quantTranscriptomeSAMoutput
+    Int? winAnchorMultimapNmax
+    String? genomeTransformOutput
 
     Int memory
     Int disk_space
@@ -71,6 +74,7 @@ task star {
         mkdir star_out
         # placeholders for optional outputs
         touch star_out/${prefix}.Aligned.toTranscriptome.out.bam
+        touch star_out/${prefix}.Chimeric.out.junction.gz
         touch star_out/${prefix}.Chimeric.out.sorted.bam
         touch star_out/${prefix}.Chimeric.out.sorted.bam.bai
         touch star_out/${prefix}.ReadsPerGene.out.tab  # run_STAR.py will gzip
@@ -104,6 +108,9 @@ task star {
             ${"--chimMainSegmentMultNmax " + chimMainSegmentMultNmax} \
             ${"--chimOutJunctionFormat " + chimOutJunctionFormat} \
             ${"--sjdbFileChrStartEnd " + sjdbFileChrStartEnd} \
+            ${"--quantTranscriptomeSAMoutput " + quantTranscriptomeSAMoutput} \
+            ${"--winAnchorMultimapNmax " + winAnchorMultimapNmax} \
+            ${"--genomeTransformOutput " + genomeTransformOutput} \
             --threads ${num_threads}
     }
 
@@ -117,7 +124,7 @@ task star {
         File read_counts = "star_out/${prefix}.ReadsPerGene.out.tab.gz"
         File junctions = "star_out/${prefix}.SJ.out.tab.gz"
         File junctions_pass1 = "star_out/${prefix}._STARpass1/${prefix}.SJ.pass1.out.tab.gz"
-        File log = "star_out/${prefix}.Log.final.out"
+        Array[File] logs = ["star_out/${prefix}.Log.final.out", "star_out/${prefix}.Log.out", "star_out/${prefix}.Log.progress.out"]
     }
 
     runtime {
