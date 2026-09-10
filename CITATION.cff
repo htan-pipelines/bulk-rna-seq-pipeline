@@ -8,17 +8,20 @@ message: >-
   metadata from this file.
 type: software
 authors:
+  - given-names: Yohana
+    family-names: Kefella
+    email: ykefella@bu.edu  
   - given-names: Chris
     family-names: Husted
     email: chusted@bu.edu
   - given-names: 'William '
     family-names: Mischler
-  - family-names: 'Venkatraman '
-    given-names: Divya
-    email: dvenkat@bu.edu
-  - given-names: Yohana
-    family-names: Kefella
-    email: ykefella@bu.edu
+  - family-names: 'Campbell '
+    given-names: Joshua
+    email: camp@bu.edu
+  - given-names: Jennifer
+    family-names: Beane
+    email: jbeane@bu.edu
 url: 'https://github.com/htan-pipelines/bulk-rna-seq-pipeline'
 abstract: Bulk RNA-seq pipeline based on the GTEx RNA-seq pipeline.
 version: '20'
