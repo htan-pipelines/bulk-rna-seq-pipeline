@@ -26,7 +26,7 @@ task createSE {
     runtime {
         disks: "local-disk ${disk} SSD"
         memory: "16 GB"
-        docker: "docker.io/htanpipelines/aggregation:latest"
+        docker: "docker.io/htanpipelines/aggregation:v2"
         preemptible: 0
     }
 }

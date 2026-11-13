@@ -7,10 +7,7 @@
 #star_file = STAR output file (log file) 
 #/Library/Frameworks/R.framework/Resources/bin/
 #Rscript createSE.R PCGA-01-0021-025-20687-01310BX-1031643R.metrics.tsv  PCGA-01-0021-025-20687-01310BX-1031643R.Aligned.sortedByCoord.out.summary.txt gencode.v34.annotation.gtf PCGA-01-0021-025-20687-01310BX-1031643R.rsem.genes.results PCGA-01-0021-025-20687-01310BX-1031643R.rsem.isoforms.results "PCGA-01-0021-025-20687-01310BX-1031643R" PCGA-01-0021-025-20687-01310BX-1031643R.Log.final.out MS-RW-R-1_S8_R1_001_fastqc.zip MS-RW-R-1_S8_R1_001_fastqc.zip PCGA02_10044_2001586_stats.txt
-httr::set_config(httr::config(ssl_verifypeer = FALSE, ssl_verifyhost = FALSE)) #Disables SSL verification
-
 create_se <- function(input_file, tinfile, gtf, gene_file, isoform_file, sample_name, star_file, fastqc_1_file,fastqc_2_file, samtools_stats_file) {
-  library(biomaRt)
   library(GenomicFeatures)
   library(SummarizedExperiment) 
   library(tidyr)
@@ -104,10 +101,6 @@ create_se <- function(input_file, tinfile, gtf, gene_file, isoform_file, sample_
   
   rsem.filenames <- list(gene=gene_file, isoform=isoform_file)
   
-  biomart.attributes <- list(
-    gene = c('ensembl_gene_id','hgnc_symbol','gene_biotype','description','band','external_gene_name','transcript_count','entrezgene_id'),
-    isoform = c('ensembl_transcript_id','ensembl_gene_id','hgnc_symbol','gene_biotype','transcript_biotype','description','band','external_gene_name','external_transcript_name','external_transcript_source_name','entrezgene_id')
-  )
   gene.file.name<-paste(sample_name,"_Gene_Expression.rds",sep="")
   isoform.file.name<-paste(sample_name,"_Isoform_Expression.rds",sep="")
   rds.files <- c(gene=gene.file.name, isoform=isoform.file.name)
@@ -122,8 +115,11 @@ create_se <- function(input_file, tinfile, gtf, gene_file, isoform_file, sample_
   # Create a TxDb object from the GTF file; this will be used to populate the
   # rowRanges of the SummarizedExperiment objects
   txdb <- makeTxDbFromGFF(gtf)
-  # listEnsemblArchives() Ensembl 108 Oct 2022 https://oct2022.archive.ensembl.org current version/release 108 
-  ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", version = "108")
+  # Ensembl 108 (Oct 2022) BioMart tables, already collapsed to one row per
+  # gene/transcript ID, exported once with
+  # docker/aggregation/export_biomart_ensembl108.R and baked into the image,
+  # instead of querying BioMart for every sample
+  biomart.files <- c(gene="/home/analysis/BM_gene_ensembl108.rds", isoform="/home/analysis/BM_isoform_ensembl108.rds")
 
   for (type in c("gene", "isoform")) {
   SE.assays <- list()
@@ -142,10 +138,7 @@ create_se <- function(input_file, tinfile, gtf, gene_file, isoform_file, sample_
     SE.assays <- lapply(SE.assays, `rownames<-`, rownames(rsem.output))
     SE.assays <- lapply(SE.assays, `colnames<-`, rownames(SE.colData))
     
-    BM <- getBM(attributes=biomart.attributes[[type]],  mart = ensembl)
-      
-    # Collapse by first column (either gene or transcript ID)
-    BM <- aggregate(BM[-1], BM[1], unique)
+    BM <- readRDS(biomart.files[[type]])
     # Reorder to match order of features from RSEM output
     BM <- BM[match(substr(rownames(SE.assays[[1]]),1,15), BM[[1]]), ]
     # Combine Biomart annotation with data from TxDb object
