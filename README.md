@@ -172,7 +172,16 @@ Most alignment/quantification tasks pin a specific image directly in the WDL:
 `rsem_reference_francois.wdl`) use `gcr.io/broad-cga-francois-gtex/gtex_rnaseq`
 (versions V9–V11); `somalier_extract`/`somalier_relate` use
 `docker.io/brentp/somalier`; `createSE`, `combine_se`, and `somalier_final`
-(the R-script tasks) use `docker.io/htanpipelines/aggregation`.
+(the R-script tasks) use `docker.io/htanpipelines/aggregation` (`createSE` pins
+`:v2`; the others still use `:latest`).
+
+`htanpipelines/aggregation:v2` is built from `docker/aggregation/Dockerfile`,
+which copies `script/createSE.R` into the image as `/home/analysis/create_SE.R`
+along with Ensembl 108 BioMart tables (`BM_gene_ensembl108.rds`,
+`BM_isoform_ensembl108.rds`). `createSE` reads gene/transcript annotation from
+these files instead of querying BioMart, so it needs no network access. To
+change the annotation, regenerate the tables with
+`docker/aggregation/export_biomart_ensembl108.R`, rebuild, and push a new tag.
 
 A number of other tasks — `ReadGroup`, `FASTQC`, `RSEQC_TIN`, every task in the
 germline-calling arm, `arcasHLA_extract`/`arcasHLA_genotype`/`arcasHLA_merge`,
